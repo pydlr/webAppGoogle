@@ -1,5 +1,6 @@
+print 'simona la mona'
 from 	flask 		import 	Flask, render_template, json, request
-from 	werkzeug 	import 	generate_password_hash, check_password_hash
+#from 	werkzeug 	import 	generate_password_hash, check_password_hash
 import 	MySQLdb 	as 		mysql
 
 app = Flask(__name__)
@@ -9,7 +10,7 @@ username 	= 'root'
 passwd 		= 'NO'
 dbname		= 'BucketList'
 hostname 	= 'localhost'
-
+print 'simon'
 @app.route('/')
 def main():
     return render_template('index.html')
