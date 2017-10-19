@@ -17,3 +17,8 @@ handlers:
 libraries:
 - name: MySQLdb
   version: "1.2.5"
+
+env_variables:
+  CLOUDSQL_CONNECTION_NAME: abogangster-182717:europe-west3:boletin
+  CLOUDSQL_USER: root
+  CLOUDSQL_PASSWORD: abogangster
