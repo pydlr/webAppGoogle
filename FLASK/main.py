@@ -80,23 +80,20 @@ def signUp():
                 conn.commit()
                 return json.dumps({'message':'User created successfully !'})
             else:
-                return json.dumps({'errorr':str(data[0])})
+                return json.dumps({'error':str(data[0])})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
 
     except Exception as e:
 
-        return json.dumps({'errorrr':str(e)})
+        return json.dumps({'error':str(e)})
     finally:
     	# TODO: This shit is bad, if name email and password are not valid, no cursor nor conn will
     	# have been created so here they will be null, fix this!
         cursor.close() 
         conn.close()
         
-
-
-
-
+        
 if __name__ == "__main__":
 	app.run()
 
