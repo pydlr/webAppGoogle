@@ -1,6 +1,6 @@
-$(function() { 
+$(function() {
     $('#btnSignUp').click(function() {
-        console.log("This is working so far No 2");
+        console.log("This is working so far");
         $.ajax({
             url: '/signUp',
             data: $('form').serialize(),
@@ -10,8 +10,8 @@ $(function() {
                 window.location = '/display';
             },
             error: function(error) {
-                console.log(" Debug error in js");
+                console.log(error);
             }
         });
     });
-}); 
+});

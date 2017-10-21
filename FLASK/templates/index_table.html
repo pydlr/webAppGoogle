@@ -18,11 +18,13 @@
         <div class="header">
             <nav>
                 <ul class="nav nav-pills pull-right">
-                    <li role="presentation" class="active"><a href="#">Home &nbsp;&nbsp;</a>
+                    <li role="presentation" class="active"><a href="main">Home &nbsp;&nbsp;</a>
                     </li>
                     <li role="presentation"><a href="#"> Sign In &nbsp;&nbsp;</a>
                     </li>
-                    <li role="presentation"><a href="showSignUp"> Sign Up</a>
+                    <li role="presentation"><a href="showSignUp"> Sign Up &nbsp;&nbsp;</a>
+                    </li>
+                     <li role="presentation"><a href="#"> Display</a>
                     </li>
                 </ul>
             </nav>
@@ -36,7 +38,7 @@
             </p>
         </div>
  
-        <div class="row marketing">
+        <div class="row marketing" href="{{ url_for('static', filename='tableStyle.css') }}">
             <table border="1" cellpadding="5" cellspacing="5">
                 {% for row in data %}
                     <tr>
@@ -45,7 +47,7 @@
                     {% endfor %}
                     </tr>
                 {% endfor %}
-</table>
+            </table>
         </div>
  
         <footer class="footer">
