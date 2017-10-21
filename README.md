@@ -3,7 +3,8 @@ Utilitarian web app using google cloud platform
 
 ## TODOs
 - Add Login and Logout: <br />
-https://code.tutsplus.com/tutorials/creating-a-web-app-from-scratch-using-python-flask-and-mysql-part-2--cms-22999
+https://code.tutsplus.com/tutorials/creating-a-web-app-from-scratch-using-python-flask-and-mysql-part-2--cms-22999  <br />
+https://cloud.google.com/appengine/docs/standard/python/authenticating-users-firebase-appengine
 
 - Be able to upload images: <br />
 https://code.tutsplus.com/tutorials/creating-a-web-app-from-scratch-using-python-flask-and-mysql-part-6--cms-23402
