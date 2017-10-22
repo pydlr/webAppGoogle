@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <title>I / O</title>
+ 
+ 
+    <link href="https://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+ 
+    <link href="https://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+ 
+ 
+</head>
+ 
+<body>
+ 
+    <div class="container">
+        <div class="header">
+            <nav>
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation" class="active"><a href="main">Home &nbsp;&nbsp;</a>
+                    </li>
+                    <li role="presentation"><a href="#"> Sign In &nbsp;&nbsp;</a>
+                    </li>
+                    <li role="presentation"><a href="showSignUp"> Sign Up &nbsp;&nbsp;</a>
+                    </li>
+                     <li role="presentation"><a href="#"> Display</a>
+                    </li>
+                </ul>
+            </nav>
+            <h3 class="text-muted">I / O - Boletin</h3>
+        </div>
+ 
+        <div class="jumbotron" 
+             style="background-color:#992727;">
+            <h1 style="color:white;">Boletin List App</h1>
+            <p class="lead"></p>
+            <p>
+            <a class="btn btn-lg btn-success" 
+                  href ="showSignUp" 
+                  role ="button" 
+                  style="background-color:#1b9686;" >
+              Sign up today
+            </a>
+            </p>
+        </div>
+ 
+        <div class="row marketing" href="{{ url_for('static', filename='tableStyle.css') }}">
+            <table border="1" cellpadding="5" cellspacing="5">
+                {% for row in data %}
+                    <tr>
+                    {% for d in row %}
+                        <td>{{ d }}</td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+ 
+        <footer class="footer">
+            <p>&copy; IO Patterns 2017</p>
+        </footer>
+ 
+    </div>
+</body>
+ 
+</html>
