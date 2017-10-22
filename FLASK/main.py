@@ -2,8 +2,10 @@ from    flask       import  Flask, render_template, json, request
 from    werkzeug    import  generate_password_hash, check_password_hash
 import  MySQLdb     as      mysql 
 import  os
+import  uuid
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'static/Uploads'
 
 # MySQL configurations
 username    = 'root'
@@ -54,7 +56,7 @@ def main():
 
 @app.route('/showSignUp')
 def showSignUp():
-    return render_template('signup.html')
+    return render_template('signup_image.html')
 
 
 @app.route('/signUp',methods=['POST','GET'])
@@ -77,7 +79,7 @@ def signUp():
 
             if len(data) is 0:
                 conn.commit()
-                return json.dumps({'message':'User created successfully !'})
+                return json.dumps({'message':'User created successfully !!'})
                 # return render_template('index_table.html', data = data)
             else:
                 return json.dumps({'error':str(data[0])})
@@ -99,13 +101,24 @@ def display():
     conn                = connect_to_cloudsql()
     cursor              = conn.cursor()
     # query               = 'SELECT * from tbl_user'
-    cursor.execute('SELECT user_id, user_name, user_username from tbl_user')
+    # cursor.execute('SELECT user_id, user_name, user_username from tbl_user')
+    cursor.execute('SELECT * from tbl_user')
 
     data = cursor.fetchall()
     conn.commit()
     cursor.close() 
     conn.close()
     return render_template('index_table.html', data = data)
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    # file upload handler code will be here
+    if request.method == 'POST':
+        file = request.files['file']
+        extension = os.path.splitext(file.filename)[1]
+        f_name = str(uuid.uuid4()) + extension
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], f_name))
+        return json.dumps({'filename':f_name})
 
 
 if __name__ == "__main__":
