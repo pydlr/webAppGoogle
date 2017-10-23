@@ -29,6 +29,9 @@ https://stackoverflow.com/questions/6092626/how-to-integrate-payment-processing-
 - Add Multilanguage: <br />
 https://pythonhosted.org/Flask-Babel/
 
+- Research security voulnerabilities of Flask or things in general: <br />
+https://nvisium.com/blog/2015/12/07/injecting-flask/
+
 
 ## Functions
 - info getBoletinDiaActual(zona): busca boletin publicado en las ultimas 24 horas. (Scheduling tasks)
