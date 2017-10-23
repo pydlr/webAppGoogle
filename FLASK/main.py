@@ -79,7 +79,7 @@ def signUp():
 
             if len(data) is 0:
                 conn.commit()
-                return json.dumps({'message':'User created successfully !!'})
+                return json.dumps({'message':'User created successfully!'})
                 # return render_template('index_table.html', data = data)
             else:
                 return json.dumps({'error':str(data[0])})
@@ -101,8 +101,8 @@ def display():
     conn                = connect_to_cloudsql()
     cursor              = conn.cursor()
     # query               = 'SELECT * from tbl_user'
-    # cursor.execute('SELECT user_id, user_name, user_username from tbl_user')
-    cursor.execute('SELECT * from tbl_user')
+    cursor.execute('SELECT user_id, user_name, user_username from tbl_user')
+    # cursor.execute('SELECT * from tbl_user')
 
     data = cursor.fetchall()
     conn.commit()
