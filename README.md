@@ -26,6 +26,9 @@ https://cloud.google.com/solutions/mobile/firebase-app-engine-android-studio
 - Enable payments: <br />
 https://stackoverflow.com/questions/6092626/how-to-integrate-payment-processing-with-gwt-gae-based-app
 
+- Add Multilanguage: <br />
+https://pythonhosted.org/Flask-Babel/
+
 
 ## Functions
 - info getBoletinDiaActual(zona): busca boletin publicado en las ultimas 24 horas. (Scheduling tasks)
