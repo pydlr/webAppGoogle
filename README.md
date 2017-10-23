@@ -27,7 +27,7 @@ https://cloud.google.com/solutions/mobile/firebase-app-engine-android-studio
 https://stackoverflow.com/questions/6092626/how-to-integrate-payment-processing-with-gwt-gae-based-app
 
 
-### Functions
+## Functions
 - info getBoletinDiaActual(zona): busca boletin publicado en las ultimas 24 horas. (Scheduling tasks)
 
 - info searchBoletinDiaActual(criterios de busqueda por definir): busca cadena, nombre, numero, etc dependiendo cual sea el criterio de busqueda, en el boletin del dia actual. (Query on Local/own database)
