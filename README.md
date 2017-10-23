@@ -9,6 +9,14 @@ https://cloud.google.com/appengine/docs/standard/python/authenticating-users-fir
 - Be able to upload images: <br />
 https://code.tutsplus.com/tutorials/creating-a-web-app-from-scratch-using-python-flask-and-mysql-part-6--cms-23402
 
+- Scheduling tasks for daily Bulletin update: <br />
+https://cloud.google.com/appengine/docs/standard/python/config/cron
+
+- Send Emails from python in Google App Engine: <br />
+https://cloud.google.com/appengine/docs/standard/python/mail/
+
+- Python scripts to retreive information from Bulletin and parse it <br />
+
 - Add Facebook Login: <br />
 https://developers.facebook.com/docs/facebook-login/android/
 
