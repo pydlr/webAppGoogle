@@ -64,6 +64,50 @@ def showSignUp():
     return render_template('signup_image.html')
 
 
+@app.route('/userHome')
+def userHome():
+    if session.get('user'):
+        return render_template('userhome.html')
+    else:
+        return render_template('loginerror.html',error = 'Unauthorized Access')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('user',None)
+    return redirect('/')
+    
+
+
+@app.route('/validateLogin',methods=['POST'])
+def validateLogin():
+    try:
+        _username = request.form['inputEmail']
+        _password = request.form['inputPassword']
+
+        # connect to mysql
+        conn    = connect_to_cloudsql()
+        cursor  = conn.cursor()
+        cursor.callproc('sp_validateLogin',(_username,))
+        data    = cursor.fetchall()
+ 
+        if len(data) > 0:
+            if check_password_hash(str(data[0][3]),_password):
+                session['user'] = data[0][0]
+                return redirect('/userHome')
+            else:
+                return render_template('error.html',error = 'Wrong Email address or Password.')
+        else:
+            return render_template('error.html',error = 'Wrong Email address or Password.')
+ 
+ 
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        con.close()
+
+
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
     # return render_template('index.html')
