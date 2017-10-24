@@ -54,8 +54,13 @@ def connect_to_cloudsql():
 def main():
     return render_template('index.html')
 
+@app.route('/showSignIn')
+def showSignin():
+    return render_template('signin.html')
+
 @app.route('/showSignUp')
 def showSignUp():
+    # return render_template('signup.html')
     return render_template('signup_image.html')
 
 
