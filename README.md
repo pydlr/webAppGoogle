@@ -32,6 +32,8 @@ https://pythonhosted.org/Flask-Babel/
 - Research security voulnerabilities of Flask or things in general: <br />
 https://nvisium.com/blog/2015/12/07/injecting-flask/
 
+- Case insensitive query: <bv />
+https://stackoverflow.com/questions/16082575/sql-ignore-case-while-searching-for-a-string
 
 ## Functions
 - info getBoletinDiaActual(zona): busca boletin publicado en las ultimas 24 horas. (Scheduling tasks)
