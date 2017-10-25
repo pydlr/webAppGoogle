@@ -33,7 +33,8 @@ https://pythonhosted.org/Flask-Babel/
 https://nvisium.com/blog/2015/12/07/injecting-flask/
 
 - Case insensitive query: <br />
-https://stackoverflow.com/questions/16082575/sql-ignore-case-while-searching-for-a-string
+https://stackoverflow.com/questions/16082575/sql-ignore-case-while-searching-for-a-string  <br />
+https://alvinalexander.com/sql/sql-select-case-insensitive-query-queries-upper-lower
 
 ## Functions
 - info getBoletinDiaActual(zona): busca boletin publicado en las ultimas 24 horas. (Scheduling tasks)
