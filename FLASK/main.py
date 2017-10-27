@@ -42,19 +42,31 @@ def connect_to_cloudsql():
     #
     #   $ cloud_sql_proxy -instances=abogangster-182717:europe-west3:boletin=tcp:3306
     #
+
     else:
+        print "local mysql"
         conn = mysql.connect(
             host    = '127.0.0.1',
             user    = 'root',
-            passwd= 'NO',
-            db='Boletin0')
+            passwd  = 'NO',
+            db      = 'Boletin0')
 
     return conn
 
 @app.route('/')
 @app.route('/main')
 def main():
+
     return render_template('index.html')
+
+# This is a dummy function to test cathing any path and using it to render content
+# @app.route('/public/<path:path>/')
+@app.route('/public')
+def bla():
+    # print path
+    return render_template('index_carousel.html', first_slider="path")
+
+
 
 @app.route('/showSignIn')
 def showSignin():
@@ -71,7 +83,7 @@ def userHome():
     if session.get('user'):
         return render_template('userhome.html')
     else:
-        return render_template('loginerror.html',error = 'Unauthorized Access')
+        return render_template('error.html',error = 'Unauthorized Access')
 
 
 @app.route('/logout')
@@ -100,22 +112,55 @@ def validateLogin():
                 session['user'] = data[0][0]
                 return redirect('/userHome')
             else:
-                return render_template('loginerror.html',error = 'Wrong Email address or Password.')
+                return render_template('error.html',error = 'Wrong Email address or Password.')
         else:
-            return render_template('loginerror.html',error = 'Wrong Email address or Password.')
+            return render_template('error.html',error = 'Wrong Email address or Password.')
  
  
     except Exception as e:
-        return render_template('loginerror.html',error = str(e))
+        return render_template('error.html',error = str(e))
     finally:
         cursor.close()
         conn.close()
         # return render_template('loginerror.html',error = 'Unauthorized Access')
 
 
+@app.route('/getProfile')
+def getProfile():
+    try:
+        print "1"
+        if session.get('user'):
+            print "2"
+            _user = session.get('user')
+
+            con = mysql.connect()
+            cursor = con.cursor()
+            cursor.callproc('sp_GetWishByUser',(_user,))
+            wishes = cursor.fetchall()
+            print "3"
+            wishes_dict = []
+            for wish in wishes:
+                wish_dict = {
+                        'Id': wish[0],
+                        'Title': wish[1],
+                        'Description': wish[2],
+                        'Date': wish[4]}
+                wishes_dict.append(wish_dict)
+
+            return json.dumps(wishes_dict)
+        else:
+            print "4"
+            return render_template('error.html', error = 'Unauthorized Access')
+    except Exception as e:
+        print "5"
+        return render_template('error.html', error = str(e))
+
+
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
     # return render_template('index.html')
+    print ("/../" + request.form['filePath1'])
+
     try:
         _name       = request.form['inputName']
         _email      = request.form['inputEmail']
@@ -148,7 +193,7 @@ def signUp():
         # have been created so here they will be null, fix this!
         cursor.close() 
         conn.close()
-        print "falla"
+
 
 @app.route('/display')        
 def display():
