@@ -1,0 +1,28 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+
+# [START handlers]
+handlers:
+- url: /static
+  static_dir: static
+- url: /js
+  static_dir: js
+- url: /css
+  static_dir: css
+- url: /.*
+  script: main.app
+# [END handlers]
+
+env_variables:
+  CLOUDSQL_CONNECTION_NAME: abogangster-182717:europe-west3:boletin
+  CLOUDSQL_USER: root
+  CLOUDSQL_PASSWORD: abogangster
+
+libraries:
+- name: MySQLdb
+  version: "1.2.5"
+# - name: OS
+#   version: "latest"
+
+
