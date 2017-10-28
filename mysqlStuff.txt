@@ -1,0 +1,119 @@
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_createUser`(
+    IN p_name VARCHAR(45),
+    IN p_username VARCHAR(45),
+    IN p_password VARCHAR(127)
+)
+BEGIN
+    if ( select exists (select 1 from tbl_user where user_username = p_username) ) THEN
+     
+        select 'Username Exists !!';
+     
+    ELSE
+     
+        insert into tbl_user
+        (
+            user_name,
+            user_username,
+            user_password
+        )
+        values
+        (
+            p_name,
+            p_username,
+            p_password
+        );
+     
+    END IF;             
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE `sp_validateLogin`(
+IN p_username VARCHAR(45)
+)
+BEGIN
+    select * from tbl_user where user_username = p_username;
+END //
+DELIMITER ;
+
+
+
+CREATE TABLE `Boletin0`.`tbl_user` (
+  `user_id` BIGINT AUTO_INCREMENT,
+  `user_name` VARCHAR(45) NULL,
+  `user_username` VARCHAR(45) NULL,
+  `user_password` VARCHAR(127) NULL,
+  PRIMARY KEY (`user_id`));
+
+
+# Add columns
+ALTER TABLE tbl_user ADD user_description TEXT, user_link TINYTEXT, user_jpg1 TINYTEXT, user_jpg2 TINYTEXT, user_jpg3 TINYTEXT, case1 CHAR(10), case2 CHAR(10), case3 CHAR(10); 
+
+ALTER TABLE tbl_user ADD user_description TEXT;
+ALTER TABLE tbl_user ADD user_link TINYTEXT;
+ALTER TABLE tbl_user ADD user_jpg1 TINYTEXT;
+
+mysql> CREATE TABLE resoluciones (territorio VARCHAR(24), materia VARCHAR(8), juez TINYTEXT, regulado VARCHAR(8), no_juez VARCHAR(8), no_expediente VARCHAR(4), año_expediente VARCHAR(4), fecha_renglon DATE, acusado TINYTEXT, victima TINYTEXT, tipo VARCHAR(24));
+Query OK, 0 rows affected (0.02 sec)
+
+
+# Delete procecure
+DROP PROCEDURE IF EXISTS procedureName;
+
+# Delete all from a table
+DELETE FROM table_name;
+
+# Restart Autoincrement:
+ALTER TABLE tablename AUTO_INCREMENT = 1
+
+
+Google Cloud MySQL instances
+connection name:
+abogangster-182717:europe-west3:boletin
+IPv4:
+35.198.153.160
+DataBase:
+Boletin0
+
+Access Google Cloud Platform SQL instance from local Shell
+mysql --host=35.198.153.160 --user=root --password
+
+Access SQL instance directly from the GCP shell:
+gcloud sql connect boletin --user=root
+boletin = name of instance
+password = abogangster
+
+my local IPv4:
+83.176.184.244
+
+DELIMITER //
+CREATE PROCEDURE `sp_createUser`(
+    IN p_name VARCHAR(45),
+    IN p_username VARCHAR(45),
+    IN p_password VARCHAR(127)
+)
+BEGIN
+    if ( select exists (select 1 from tbl_user where user_username = p_username) ) THEN
+     
+        select 'Username Exists !!';
+     
+    ELSE
+     
+        insert into tbl_user
+        (
+            user_name,
+            user_username,
+            user_password
+        )
+        values
+        (
+            p_name,
+            p_username,
+            p_password
+        );
+     
+    END IF;
+END //
+DELIMITER ;
