@@ -75,7 +75,7 @@ def showSignin():
 @app.route('/showSignUp')
 def showSignUp():
     # return render_template('signup.html')
-    return render_template('signup_image.html')
+    return render_template('demo_signup.html')
 
 
 @app.route('/userHome')
