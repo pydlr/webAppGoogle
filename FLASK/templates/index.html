@@ -1,188 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
- 
-<head>
+  <head>
     <meta charset="utf-8">
+    <title>Boletin BC [demo-v0.1]</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="sharky development">
+    <meta name="author" content="">
 
+    <!-- Le styles -->
+    <link href="../static/assets/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="../static/assets/css/bootstrap-responsive.css" rel="stylesheet">
 
-    <title>I /O</title>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../assets/js/html5shiv.js"></script>
+    <![endif]-->
 
-    <!-- Bootstrap core CSS -->
-    <link href="../static/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../static/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../static/assets/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../static/assets/ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="../static/assets/ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="../static/assets/ico/favicon.png">
+  </head>
 
-     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="../static/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+  <body>
 
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="../static/assets/js/ie-emulation-modes-warning.js"></script>
- 
-    <!-- <link href="https://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet"> -->
-    <!-- <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-    <!-- <link href="https://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet"> -->
-
-
-<!-- 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"> -->
-    <!-- <link href="https://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet"> -->
-
-    <!-- Custom styles for this template -->
-    <link href="../static/css/signin.css" rel="stylesheet">
-    <link href="../static/css/signup.css" rel="stylesheet">
-    <link href="../static/css/carousel.css" rel="stylesheet">
-    <link href="../static/css/navbar.css" rel="stylesheet">
-
-
-<!--     <script src="../static/js/jquery-3.2.1.js"></script>
-    <script src="../static/js/signUp.js"></script>
-    <script src="../static/js/jquery.ui.widget.js"></script> -->
- 
-</head>
- 
-<body>
-
-    <!-- NAVBAR
-================================================== -->
-    <div class="navbar-wrapper">
-      <div class="container">
-
-        <nav class="navbar navbar-inverse navbar-static-top">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="#">Catalogue List</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-              <ul class="nav navbar-nav">
-                <li class="active"><a href="/">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li class="dropdown-header">Nav header</li>
-                    <li><a href="#">Separated link</a></li>
-                    <li><a href="#">One more separated link</a></li>
-                  </ul>
-                </li>
-              </ul>
-              <ul class="nav navbar-nav navbar-right">
-                <form class="navbar-form navbar-left">
-                  <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search Case">
-                    <div class="input-group-btn">
-                      <button class="btn btn-default" type="submit">
-                        <i class="glyphicon glyphicon-search"></i>
-                      </button>
-                    </div>
-                  </div>
-                </form>
-                <li><a href="/showSignUp"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                <li><a href="/showSignIn"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Project name</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Action</a></li>
+                  <li><a href="#">Another action</a></li>
+                  <li><a href="#">Something else here</a></li>
+                  <li class="divider"></li>
+                  <li class="nav-header">Nav header</li>
+                  <li><a href="#">Separated link</a></li>
+                  <li><a href="#">One more separated link</a></li>
+                </ul>
+              </li>
+            </ul>
+            <form class="navbar-form pull-right">
+              <input class="span2" type="text" placeholder="Email">
+              <input class="span2" type="password" placeholder="Password">
+              <button type="submit" class="btn">Sign in</button>
+            </form>
+          </div><!--/.nav-collapse -->
+        </div>
       </div>
     </div>
-    <!-- NAVBAR -->
-    <!-- ======================================================================== -->
+   <div class="container">
 
- 
-    <!-- CONTAINER  -->
-    <!-- ============================================================ -->
-    <div class="container">
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit" style="background-image: url(/../static/Uploads/leaf.jpg);">
+        <h1>Sveiki atvykę!</h1>
+        <h1>Boletin Judicial BC App</h1>
+        <p></p>
+        <p><a href="#" class="btn btn-primary btn-large">Sign Up!</a></p>
+      </div>
+      </div>
 
+      <footer>
+        <p>&copy; IO Patterns 2017</p>
+      </footer>
 
+    </div> <!-- /container -->
 
-        <!-- JUMBOTRON  -->
-        <!-- ============================================================ -->
-        <div class="jumbotron" 
-             style="background-color:#992727; background-image: url(/../static/Uploads/transistor_section.png);">
-            <h1 style="color:white;">Catalogue List App</h1>
-            <p class="lead"></p>
-            <p>
-            <a class="btn btn-lg btn-success" 
-                  href ="showSignUp" 
-                  role ="button" 
-                  style="background-color:#1b9686;" >
-              Sign up today
-            </a>
-            </p>
-        </div>
-        <!-- JUMBOTRON  -->
-        <!-- ============================================================ -->
-
-
-        <!-- ROW MARKETING  -->
-        <!-- ============================================================ -->
-        <div class="row marketing">
-            <div class="col-lg-6">
-                <h4>Asmeniškai ant voko</h4>
-                <p>Paraiškos dėl edukacinių stipendijų skyrimo Tarybai siunčiamos paštu (galioja pašto spaude nurodyta data) arba pristatomos </p>
- 
-                <h4>Maecenas sed diam</h4>
-                <p>asmeniškai ant voko nurodant „Stipendijos paraiška“, arba elektroniniu paštu (patvirtintos saugiu elektroniniu parašu). Po kvietime </p>
- 
-                <h4>Donec id elit</h4>
-                <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
-            </div>
- 
-            <div class="col-lg-6">
-                <h4>Nustatyto termino pabaigos</h4>
-                <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
- 
-                <h4>Paraiškos gauti</h4>
-                <p>nustatyto termino pabaigos pateiktos paraiškos nepriimamos ir nevertinamos.</p>
- 
-                <h4>Lyserg-säure-diäthylamid</h4>
-                <p>Paraiškos gauti valstybės individualią ar edukacinę stipendiją Lietuvos kultūros tarybai gali būti: siunčiamos paštu</p>
-            </div>
-        </div>
-        <!-- ROW MARKETING  -->
-        <!-- ============================================================ -->
- 
-        <footer class="footer">
-            <p>&copy; IO Patterns 2017</p>
-        </footer>
- 
-    </div> 
-        <!-- CONTAINER  -->
-    <!-- ============================================================ -->
-
-
-
-
-    <!-- BOOTSTRAP CORE JAVASCRIPT
+    <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="../static/dist/js/bootstrap.min.js"></script>
-    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="../static/assets/js/vendor/holder.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../static/assets/js/ie10-viewport-bug-workaround.js"></script>
-    <!-- BOOTSTRAP CORE JAVASCRIPT
-    ================================================== -->
+    <script src="../static/assets/js/jquery.js"></script>
+    <script src="../static/assets/js/bootstrap-transition.js"></script>
+    <script src="../static/assets/js/bootstrap-alert.js"></script>
+    <script src="../static/assets/js/bootstrap-modal.js"></script>
+    <script src="../static/assets/js/bootstrap-dropdown.js"></script>
+    <script src="../static/assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../static/assets/js/bootstrap-tab.js"></script>
+    <script src="../static/assets/js/bootstrap-tooltip.js"></script>
+    <script src="../static/assets/js/bootstrap-popover.js"></script>
+    <script src="../static/assets/js/bootstrap-button.js"></script>
+    <script src="../static/assets/js/bootstrap-collapse.js"></script>
+    <script src="../static/assets/js/bootstrap-carousel.js"></script>
+    <script src="../static/assets/js/bootstrap-typeahead.js"></script>
 
-
-</body>
- 
+  </body>
+</html>
 </html>
