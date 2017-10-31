@@ -10,10 +10,10 @@ app.secret_key = 'why would I tell you my secret key?'
 
 # MySQL configurations
 username    = 'root'
-passwd      = 'NO'
-dbname      = 'Boletin0'
+passwd      = 'YES'
+dbname      = 'demo_users'
 hostname    = 'localhost'
-tablename   = 'tbl_user'
+tablename   = 'userinfo'
 
 
 # These environnment variables are configured in app.yaml
@@ -48,8 +48,8 @@ def connect_to_cloudsql():
         conn = mysql.connect(
             host    = '127.0.0.1',
             user    = 'root',
-            passwd  = 'NO',
-            db      = 'Boletin0')
+            passwd  = 'YES',
+            db      = dbname)
 
     return conn
 
@@ -158,41 +158,41 @@ def getProfile():
 
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
-    # return render_template('index.html')
-    print ("/../" + request.form['filePath1'])
+    return render_template('index.html')
+    # print ("/../" + request.form['filePath1'])
 
-    try:
-        _name       = request.form['inputName']
-        _email      = request.form['inputEmail']
-        _password   = request.form['inputPassword']
-        # validate the received values
-        if _name and _email and _password:
+    # try:
+    #     _name       = request.form['inputName']
+    #     _email      = request.form['inputEmail']
+    #     _password   = request.form['inputPassword']
+    #     # validate the received values
+    #     if _name and _email and _password:
 
-            # All Good, let's call MySQL
-            # conn              = mysql.connect(host=hostname,user=username,passwd=passwd,db=dbname)
-            conn                = connect_to_cloudsql()
-            cursor              = conn.cursor()
-            _hashed_password    = generate_password_hash(_password)
-            cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
-            data                = cursor.fetchall()
+    #         # All Good, let's call MySQL
+    #         conn              = mysql.connect(host=hostname,user=username,passwd=passwd,db=dbname)
+    #         #conn                = connect_to_cloudsql()
+    #         cursor              = conn.cursor()
+    #         _hashed_password    = generate_password_hash(_password)
+    #         cursor.callproc('sp_create_user',(_name,_email,_hashed_password))
+    #         data                = cursor.fetchall()
 
-            if len(data) is 0:
-                conn.commit()
-                return json.dumps({'message':'User created successfully!'})
-                # return render_template('index_table.html', data = data)
-            else:
-                return json.dumps({'error':str(data[0])})
-        else:
-            return json.dumps({'html':'<span>Enter the required fields</span>'})
+    #         if len(data) is 0:
+    #             conn.commit()
+    #             return json.dumps({'message':'User created successfully!'})
+    #             # return render_template('index_table.html', data = data)
+    #         else:
+    #             return json.dumps({'error':str(data[0])})
+    #     else:
+    #         return json.dumps({'html':'<span>Enter the required fields</span>'})
 
-    except Exception as e:
+    # except Exception as e:
 
-        return json.dumps({'error':str(e)})
-    finally:
-        # TODO: This shit is bad, if name email and password are not valid, no cursor nor conn will
-        # have been created so here they will be null, fix this!
-        cursor.close() 
-        conn.close()
+    #     return json.dumps({'error':str(e)})
+    # finally:
+    #     # TODO: This shit is bad, if name email and password are not valid, no cursor nor conn will
+    #     # have been created so here they will be null, fix this!
+    #     cursor.close() 
+    #     conn.close()
 
 
 @app.route('/display')        
