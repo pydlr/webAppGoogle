@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Boletin BC - Sign Up Form [demo-v0.1]</title>
+    <title>Boletin BC [demo-v0.1]</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -16,15 +16,7 @@
         padding-bottom: 40px;
       }
     </style>
-    <link href="../static/assets/css/bootstrap-responsive.css" rel="stylesheet">/
-    <!-- <link href="../static/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-    <!-- <link href="../static/css/navbar.css" rel="stylesheet"> -->
-
- <!-- <link href="../static/css/jumbotron-narrow.css" rel="stylesheet">
-
-   <link href="../static/css/signup.css" rel="stylesheet">
-  <link href="../static/css/carousel.css" rel="stylesheet">
-  <link href="../static/css/navbar.css" rel="stylesheet"> -->
+    <link href="../static/assets/css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -41,8 +33,6 @@
 
   <body>
 
-                 <!-- NAVBAR
-================================================== -->
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
@@ -55,68 +45,29 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li class="active"><a href="/main">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
             </ul>
-            <ul class="nav navbar-nav pull-right">
-             
+            <ul>
               <li>
-                 <form    class="navbar-form pull-right" action="/validateLogin" method="post">
+                 <form   class="navbar-form pull-right" action="/validateLogin" method="post">
                   <input class="span2"    type="text"       name='inputEmail'     placeholder="Email" required>
-                  <input class="span2"    type="password"   name='inputPassword' placeholder="Password" required >
+                  <input class="span2"    type="password"   name='inputPassword' placeholder="Password" required>
                   <button href="#signUp"  type="submit"     class="btn" >Sign in</button>
                 </form>
-              </li>
-                            
+              </li> 
             </ul>
           </div><!--/.nav-collapse -->
         </div>
       </div>
     </div>
-                     <!-- navbar
-================================================== -->
-
-
    <div class="container">
 
       <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="hero-unit" style="background-image: url(/../static/Uploads/blue_abstract_2.jpg);background-size:100%">
-<!-- <div class="well"> -->
-          <form class="form-group" role="form" method="post" action="/signUp">
-
-            <!-- Form Name -->
-            <legend style="color:white;">Register</legend>
-
-            <!-- Name input-->
-            <div class="form-group">
-              <label  for="txtTitle" style="color:white;">Name</label>  
-              <input id="inputName" name="inputName" type="text" placeholder="" class="form-control input-md" required> 
-            </div>
-
-            <!-- Email input-->
-            <div class="form-group">
-              <label  for="txtTitle" style="color:white;">Email</label>  
-              <input id="inputEmail" name="inputEmail" type="email" placeholder="" class="form-control input-md" required> 
-            </div>
-
-            <!-- Password input-->
-            <div class="form-group">
-              <label  for="txtTitle" style="color:white;">Password</label>  
-              <input id="inputPassword" name="inputPassword" type="password" placeholder="" class="form-control input-md" required> 
-            </div>
-
-            
-            <!-- Button -->
-            <div class="form-group">
-                <p class="text-left">
-                  <button id="btnSignUp" 
-                                class = "btn btn-primary btn-large"
-                                type="button"
-                                style="background-color:#1b9686;">
-                                Sign Up!
-                  </button>
-                </p>
-            </div>
-          </form>
-
+      <div class="hero-unit" style="background-image: url(/../static/Uploads/leaf.jpg);">
+        <!-- <h1>Sveiki atvykę!</h1> -->
+        <h1 class="display-1" style='font-weight: lighter;'>{{error}}</h1>
+        <p></p>
       </div>
       </div>
 
@@ -142,8 +93,6 @@
     <script src="../static/assets/js/bootstrap-collapse.js"></script>
     <script src="../static/assets/js/bootstrap-carousel.js"></script>
     <script src="../static/assets/js/bootstrap-typeahead.js"></script>
-
-    <script src="../static/js/signUp.js"></script>
 
   </body>
 </html>
