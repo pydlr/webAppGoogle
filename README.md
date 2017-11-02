@@ -1,47 +1,14 @@
-# webAppGoogle
-Utilitarian web app using google cloud platform
+### BOLETIN JUDICIAL DEMO APP ###
 
-## TODOs
-- Add Login and Logout: <br />
-https://code.tutsplus.com/tutorials/creating-a-web-app-from-scratch-using-python-flask-and-mysql-part-2--cms-22999  <br />
-https://cloud.google.com/appengine/docs/standard/python/authenticating-users-firebase-appengine
+Padrino: Luego voy a pasar este branch a a un repositorio individual con el nombre apropiado y privado. Por lo pronto, quite muchos archivos y templates
+que van a ser necesarios pero me causaba conflicto ver tantos en los folder y no saber cuales estaba usando. 
 
-- Be able to upload images: <br />
-https://code.tutsplus.com/tutorials/creating-a-web-app-from-scratch-using-python-flask-and-mysql-part-6--cms-23402
+Nuevos templates en este branch hay que ponerlos como demo_nombre.html.
 
-- Scheduling tasks for daily Bulletin update: <br />
-https://cloud.google.com/appengine/docs/standard/python/config/cron
+Me gustaria tener la forma demo_signup.html funcionando. Estoy solamente tomando en cuenta estos 3 datos para el demo,
 
-- Send Emails from python in Google App Engine: <br />
-https://cloud.google.com/appengine/docs/standard/python/mail/
+Nombre, Email y password. Registrar casos y lo que sigue lo hacemos en otras tablas fuera de esta forma de registro una vez que el usuario ya se registro.
 
-- Python scripts to retreive information from Bulletin and parse it <br />
-
-- Add Facebook Login: <br />
-https://developers.facebook.com/docs/facebook-login/android/
-
-- Add Android interface and Push Notifications : <br />
-https://cloud.google.com/solutions/mobile/firebase-app-engine-android-studio
-
-- Enable payments: <br />
-https://stackoverflow.com/questions/6092626/how-to-integrate-payment-processing-with-gwt-gae-based-app
-
-- Add Multilanguage: <br />
-https://pythonhosted.org/Flask-Babel/
-
-- Research security voulnerabilities of Flask or things in general: <br />
-https://nvisium.com/blog/2015/12/07/injecting-flask/
-
-- Case insensitive query: <br />
-https://stackoverflow.com/questions/16082575/sql-ignore-case-while-searching-for-a-string  <br />
-https://alvinalexander.com/sql/sql-select-case-insensitive-query-queries-upper-lower
-
-## Functions
-- info getBoletinDiaActual(zona): busca boletin publicado en las ultimas 24 horas. (Scheduling tasks)
-
-- info searchBoletinDiaActual(criterios de busqueda por definir): busca cadena, nombre, numero, etc dependiendo cual sea el criterio de busqueda, en el boletin del dia actual. (Query on Local/own database)
-
-- mailBoletin(boletin): enviar al email del usuario registrado la informacion de la busqueda 
-
-- getBoletinesHistorico(zona,fromDay,fromMonth,fromYear,toDay,toMonth,toYear): funcion que busca todos los boletines especificados dentro del rango de fechas por zona. (Admin only)
+De mi lado ya tengo mi base de datos y tabla con esos 3 campos y ya meti los metodos para validar almacenar un nuevo usuario. 
+Intenta hacer lo mismo tener tu tabla con esos 3 fields, y hacer que el boton de signup mande llamar la base de datos que por alguna razon a mi no me sirve el boton.
 

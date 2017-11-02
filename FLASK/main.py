@@ -7,13 +7,14 @@ import  uuid
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/Uploads'
 app.secret_key = 'why would I tell you my secret key?'
+app.debug = True
 
 # MySQL configurations
 username    = 'root'
 passwd      = 'NO'
-dbname      = 'Boletin0'
+dbname      = 'demo_users'
 hostname    = 'localhost'
-tablename   = 'tbl_user'
+tablename   = 'userinfo'
 
 
 # These environnment variables are configured in app.yaml
@@ -49,7 +50,7 @@ def connect_to_cloudsql():
             host    = '127.0.0.1',
             user    = 'root',
             passwd  = 'NO',
-            db      = 'Boletin0')
+            db      = dbname)
 
     return conn
 
@@ -75,15 +76,24 @@ def showSignin():
 @app.route('/showSignUp')
 def showSignUp():
     # return render_template('signup.html')
-    return render_template('signup_image.html')
+    return render_template('demo_signup.html')
 
 
-@app.route('/userHome')
-def userHome():
-    if session.get('user'):
-        return render_template('userhome.html')
+@app.route('/userHome/<path:path>/',methods=['GET','POST'])
+def userHome(path):
+    if str(session.get('user')) == str(path):
+
+        conn    = connect_to_cloudsql()
+        cursor  = conn.cursor()
+        # cursor.callproc('sp_validateLogin',(_username,))
+        mysql_query = "SELECT * FROM userinfo WHERE user_name = '" + str(path) + "';"
+        cursor.execute(mysql_query)
+        data    = cursor.fetchall()
+
+        return render_template('demo_userhome.html', 
+            username=data[0][1])
     else:
-        return render_template('error.html',error = 'Unauthorized Access')
+        return render_template('demo_error.html',error = 'Unauthorized Access')
 
 
 @app.route('/logout')
@@ -92,10 +102,11 @@ def logout():
     return redirect('/')
 
 
-
 @app.route('/validateLogin',methods=['POST'])
 def validateLogin():
     try:
+        print request.form['inputEmail']
+        print ' simona'
         _username = request.form['inputEmail']
         _password = request.form['inputPassword']
         print _username
@@ -109,16 +120,17 @@ def validateLogin():
  
         if len(data) > 0:
             if check_password_hash(str(data[0][3]),_password):
-                session['user'] = data[0][0]
-                return redirect('/userHome')
+                session['user'] = data[0][1]
+                path = 'userHome/'+str(session['user'])
+                return redirect(path)
             else:
-                return render_template('error.html',error = 'Wrong Email address or Password.')
+                return render_template('demo_error.html',error = 'Wrong Email address or Password.')
         else:
-            return render_template('error.html',error = 'Wrong Email address or Password.')
+            return render_template('demo_error.html',error = 'Wrong Email address or Password.')
  
  
     except Exception as e:
-        return render_template('error.html',error = str(e))
+        return render_template('demo_error.html',error = str(e))
     finally:
         cursor.close()
         conn.close()
@@ -150,10 +162,10 @@ def getProfile():
             return json.dumps(wishes_dict)
         else:
             print "4"
-            return render_template('error.html', error = 'Unauthorized Access')
+            return render_template('demo_error.html', error = 'Unauthorized Access')
     except Exception as e:
         print "5"
-        return render_template('error.html', error = str(e))
+        return render_template('demo_error.html', error = str(e))
 
 
 @app.route('/signUp',methods=['POST','GET'])
@@ -170,17 +182,19 @@ def signUp():
         if _name and _email and _password:
 
             # All Good, let's call MySQL
-            # conn              = mysql.connect(host=hostname,user=username,passwd=passwd,db=dbname)
-            conn                = connect_to_cloudsql()
+            conn                = mysql.connect(host=hostname,user=username,passwd=passwd,db=dbname)
+            #conn                = connect_to_cloudsql()
             cursor              = conn.cursor()
             _hashed_password    = generate_password_hash(_password)
-            cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
+            cursor.callproc('sp_create_user',(_name,_email,_hashed_password))
             data                = cursor.fetchall()
 
             if len(data) is 0:
-                conn.commit()
-                return json.dumps({'message':'User created successfully!'})
+                conn.commit()   
+                session['user'] = _name
+                # return json.dumps({'message':'User created successfully!'})
                 # return render_template('index_table.html', data = data)
+                return _name
             else:
                 return json.dumps({'error':str(data[0])})
         else:
@@ -194,7 +208,6 @@ def signUp():
         # have been created so here they will be null, fix this!
         cursor.close() 
         conn.close()
-
 
 @app.route('/display')        
 def display():
@@ -222,7 +235,7 @@ def upload():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0',port=8888)
 
 
 
