@@ -23,6 +23,7 @@ CLOUDSQL_USER               = os.environ.get('CLOUDSQL_USER')
 CLOUDSQL_PASSWORD           = os.environ.get('CLOUDSQL_PASSWORD')
 
 def connect_to_cloudsql():
+    print 'here'
     # When deployed to App Engine, the 'SERVER_SOFTWARE' environment variable
     # will be set to 'Google App Engine/version'.
     if os.getenv('SERVER_SOFTWARE','').startswith('Google App Engine/'):
@@ -51,13 +52,13 @@ def connect_to_cloudsql():
             user    = 'root',
             passwd  = 'NO',
             db      = dbname)
+        print conn
 
     return conn
 
 @app.route('/')
 @app.route('/main')
 def main():
-
     return render_template('index.html')
 
 # This is a dummy function to test cathing any path and using it to render content
@@ -66,8 +67,6 @@ def main():
 def bla():
     # print path
     return render_template('index_carousel.html', first_slider="path")
-
-
 
 @app.route('/showSignIn')
 def showSignin():
@@ -170,21 +169,25 @@ def getProfile():
 
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
-    # return render_template('index.html')
 
     try:
         _name       = request.form['inputName']
-        _email      = request.form['inputEmail']
-        _password   = request.form['inputPassword']
+        _email      = request.form['inputEmailSignUp']
+        _password   = request.form['inputPasswordSignUp']
+
+        print _name, " " , _email, " ", _password
+        
         # validate the received values
         if _name and _email and _password:
 
             # All Good, let's call MySQL
-            conn                = mysql.connect(host=hostname,user=username,passwd=passwd,db=dbname)
-            #conn                = connect_to_cloudsql()
+            # conn                = mysql.connect(host=hostname,user=username,passwd=passwd,db=dbname)
+            conn                = connect_to_cloudsql()
             cursor              = conn.cursor()
             _hashed_password    = generate_password_hash(_password)
+            print 'simon'
             cursor.callproc('sp_create_user',(_name,_email,_hashed_password))
+            print 'simona'
             data                = cursor.fetchall()
 
             if len(data) is 0:
@@ -233,7 +236,7 @@ def upload():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=8888)
+    app.run(host='0.0.0.0',port=5000)
 
 
 

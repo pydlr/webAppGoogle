@@ -2,29 +2,27 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Boletin BC - Sign Up Form [demo-v0.1]</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
+    <title>Boletin BC - Sign Up Form [demo-v0.1]</title>
 
-    <!-- Le styles -->
-    <link href="../static/assets/css/bootstrap.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-    </style>
-    <link href="../static/assets/css/bootstrap-responsive.css" rel="stylesheet">/
     <!-- <link href="../static/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+   <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"> -->
+
+    <!-- Le styles --> 
+    <link href="../static/assets/css/bootstrap.css" rel="stylesheet">
+    
+    <link href="../static/assets/css/bootstrap-responsive.css" rel="stylesheet">
+    
     <!-- <link href="../static/css/navbar.css" rel="stylesheet"> -->
 
- <!-- <link href="../static/css/jumbotron-narrow.css" rel="stylesheet">
+ <!-- <link href="../static/css/jumbotron-narrow.css" rel="stylesheet"> -->
 
    <link href="../static/css/signup.css" rel="stylesheet">
   <link href="../static/css/carousel.css" rel="stylesheet">
-  <link href="../static/css/navbar.css" rel="stylesheet"> -->
+  <link href="../static/css/navbar.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -37,12 +35,24 @@
       <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../static/assets/ico/apple-touch-icon-72-precomposed.png">
                     <link rel="apple-touch-icon-precomposed" href="../static/assets/ico/apple-touch-icon-57-precomposed.png">
                                    <link rel="shortcut icon" href="../static/assets/ico/favicon.png">
+
+
+
+  <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+
   </head>
 
   <body>
 
                  <!-- NAVBAR
 ================================================== -->
+<div class='navbar-wrapper'>
+<div class='container'>
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
@@ -65,12 +75,18 @@
                   <button href="#signUp"  type="submit"     class="btn" >Sign in</button>
                 </form>
               </li>
+
+              <li><a href="/showSignUp"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+              <li><a href="/showSignIn"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                             
             </ul>
           </div><!--/.nav-collapse -->
         </div>
       </div>
     </div>
+
+  </div>
+</div>
                      <!-- navbar
 ================================================== -->
 
@@ -80,39 +96,37 @@
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="hero-unit" style="background-image: url(/../static/Uploads/blue_abstract_2.jpg);background-size:100%">
 <!-- <div class="well"> -->
-          <form class="form-group" role="form" method="post" action="/signUp">
+          <form class="form-group" role="form" action="/signUp" method="post"  >
 
             <!-- Form Name -->
             <legend style="color:white;">Register</legend>
 
             <!-- Name input-->
             <div class="form-group">
-              <label  for="txtTitle" style="color:white;">Name</label>  
-              <input id="inputName" name="inputName" type="text" placeholder="" class="form-control input-md" required> 
+              <label  for="txtTitle" style="color:white;">Names</label>  
+              <input name="inputName" type="text" placeholder="" class="form-control input-md"> 
             </div>
 
             <!-- Email input-->
             <div class="form-group">
               <label  for="txtTitle" style="color:white;">Email</label>  
-              <input id="inputEmail" name="inputEmail" type="email" placeholder="" class="form-control input-md" required> 
+              <input name="inputEmailSignUp" type="email" placeholder="example@example.com" class="form-control input-md"> 
             </div>
 
             <!-- Password input-->
             <div class="form-group">
               <label  for="txtTitle" style="color:white;">Password</label>  
-              <input id="inputPassword" name="inputPassword" type="password" placeholder="" class="form-control input-md" required> 
+              <input name="inputPasswordSignUp" type="password" placeholder="" class="form-control input-md"> 
             </div>
 
             
             <!-- Button -->
             <div class="form-group">
                 <p class="text-left">
-                  <button id="btnSignUp" 
-                                class = "btn btn-primary btn-large"
-                                type="button"
-                                style="background-color:#1b9686;">
+                  <a  id = "btnSignUp"
+                                class = "btn btn-primary btn-large">
                                 Sign Up!
-                  </button>
+                  </a>
                 </p>
             </div>
           </form>
@@ -130,18 +144,18 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="../static/assets/js/jquery.js"></script>
-    <script src="../static/assets/js/bootstrap-transition.js"></script>
-    <script src="../static/assets/js/bootstrap-alert.js"></script>
-    <script src="../static/assets/js/bootstrap-modal.js"></script>
-    <script src="../static/assets/js/bootstrap-dropdown.js"></script>
-    <script src="../static/assets/js/bootstrap-scrollspy.js"></script>
-    <script src="../static/assets/js/bootstrap-tab.js"></script>
-    <script src="../static/assets/js/bootstrap-tooltip.js"></script>
-    <script src="../static/assets/js/bootstrap-popover.js"></script>
-    <script src="../static/assets/js/bootstrap-button.js"></script>
-    <script src="../static/assets/js/bootstrap-collapse.js"></script>
-    <script src="../static/assets/js/bootstrap-carousel.js"></script>
-    <script src="../static/assets/js/bootstrap-typeahead.js"></script>
+    <!-- <script src="../static/assets/js/bootstrap-transition.js"></script> -->
+    <!-- <script src="../static/assets/js/bootstrap-alert.js"></script> -->
+    <!-- <script src="../static/assets/js/bootstrap-modal.js"></script> -->
+    <!-- <script src="../static/assets/js/bootstrap-dropdown.js"></script> -->
+    <!-- <script src="../static/assets/js/bootstrap-scrollspy.js"></script> -->
+    <!-- <script src="../static/assets/js/bootstrap-tab.js"></script> -->
+    <!-- <script src="../static/assets/js/bootstrap-tooltip.js"></script> -->
+    <!-- <script src="../static/assets/js/bootstrap-popover.js"></script> -->
+    <!-- <script src="../static/assets/js/bootstrap-button.js"></script> -->
+    <!-- <script src="../static/assets/js/bootstrap-collapse.js"></script> -->
+    <!-- <script src="../static/assets/js/bootstrap-carousel.js"></script> -->
+    <!-- <script src="../static/assets/js/bootstrap-typeahead.js"></script> -->
 
     <script src="../static/js/signUp.js"></script>
 
