@@ -41,13 +41,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="brand" href="#">Boletin BC</a>
+          <a class="brand" href="/">Boletin BC</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="main">Home</a></li>
+              <li class="active"><a href="/main">Home</a></li>
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li>
-              <li class="dropdown">
+              <!-- <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="#">Action</a></li>
@@ -58,13 +58,17 @@
                   <li><a href="#">Separated link</a></li>
                   <li><a href="#">One more separated link</a></li>
                 </ul>
-              </li>
+              </li> -->
             </ul>
-            <form class="navbar-form pull-right">
-              <input class="span2" type="text" placeholder="Email">
-              <input class="span2" type="password" placeholder="Password">
-              <button href="signUp" type="submit" class="btn" >Sign in</button>
-            </form>
+            <ul>
+              <li>
+                 <form   class="navbar-form pull-right" action="/validateLogin" method="post">
+                  <input class="span2"    type="text"       name='inputEmail'     placeholder="Email" required>
+                  <input class="span2"    type="password"   name='inputPassword' placeholder="Password" required>
+                  <button href="#signUp"  type="submit"     class="btn" >Sign in</button>
+                </form>
+              </li> 
+            </ul>
           </div><!--/.nav-collapse -->
         </div>
       </div>
@@ -73,15 +77,16 @@
 
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="hero-unit" style="background-image: url(/../static/Uploads/leaf.jpg);">
-        <h1>Sveiki atvykę!</h1>
-        <h1>Boletin Judicial BC App</h1>
+        <!-- <h1>Sveiki atvykę!</h1> -->
+        <h1 class="display-1" style='font-weight: lighter; color:white'>Boletin Judicial</h1>
+        <h1 class="display-1" style='font-weight: lighter; color:white'>BC App</h1>
         <p></p>
         <p><a class="btn btn-primary btn-large" href="showSignUp">Sign Up!</a></p>
       </div>
       </div>
 
-      <footer>
-        <p>&copy; IO Patterns 2017</p>
+      <footer style="margin-top:80px ; margin-left: 80px"">
+        <h5 class="brand" >&copy; IO Patterns 2017</h5>
       </footer>
 
     </div> <!-- /container -->
