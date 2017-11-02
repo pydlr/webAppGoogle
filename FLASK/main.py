@@ -174,8 +174,6 @@ def signUp():
         _name       = request.form['inputName']
         _email      = request.form['inputEmailSignUp']
         _password   = request.form['inputPasswordSignUp']
-
-        print _name, " " , _email, " ", _password
         
         # validate the received values
         if _name and _email and _password:
