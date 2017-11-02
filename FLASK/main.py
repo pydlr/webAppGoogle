@@ -171,6 +171,8 @@ def getProfile():
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
     # return render_template('index.html')
+    print "path"
+    print ("/../" + request.form['filePath1'])
 
     try:
         _name       = request.form['inputName']
