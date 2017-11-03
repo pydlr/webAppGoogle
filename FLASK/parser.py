@@ -2,7 +2,61 @@ import re
 import urllib2
 from bs4 import BeautifulSoup
 
-found = False
+finished = False
+levelNames 		= [""] * 7
+levelOptions 	= [0] * 7
+
+#
+
+# ======================================================================
+def scanHTML(prev_element, i ):
+
+	#AUTORIDAD
+	levelOptions[0] = {	'H. TRIBUNAL SUPERIOR DE JUSTICIA',
+						'JUZGADO'}
+	# SECRETARIA
+	levelOptions[1] = { 'ACUERDOS EN EL RAMO',
+						'SECCION DE AMPAROS RAMO',
+						'NUEVO SISTEMA DE JUSITICIA',
+						'SALA',
+						'SECRETARIA'}
+
+	# TIPO_RESOLUCION
+	levelOptions[2] = { 'Acuerdos',
+						'Admisiones',
+						'Audiencias',
+						'Sentencias',
+						'Exhortos',
+						'Cuadernos de Amparo',
+						'Cuadernos de Antecedentes'}
+	for option in levelOptions[i]:
+		print 'OPTION: ' +  str(option)
+
+
+	finished = False
+	previous = prev_element
+	while not finished:
+		next = previous.find_next('span')
+
+		if next == 'EDICTO':
+			finished = True 
+
+		for option in levelOptions[i]:
+
+			if option in next:
+				
+				levelNames[i] = next
+				i =+ 1
+
+				if i >= 5:
+					i = 3
+
+
+				break
+		previous = next
+# ======================================================================
+
+
 link = 'http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm'
 
 html = urllib2.urlopen(link)
@@ -14,65 +68,25 @@ firstElement = soup.find(text = re.compile(r'H. TRIBUNAL SUPERIOR'))
 AUTORIDAD = firstElement
 print 'Autoridad: ' + str(AUTORIDAD)
 
-while not found:
+scanHTML(firstElement, 1)
 
-	next = firstElement.find_next('span')
-	if ('ACUERDOS EN EL RAMO' in next.text):
-	 	found = True
+# while not found:
 
-	previous = next
-	next = next.find_next('span')
+# 	next = firstElement.find_next('span')
+# 	if ('ACUERDOS EN EL RAMO' in next.text):
+# 	 	found = True
 
-print previous.text	
+# 	previous = next
+# 	next = next.find_next('span')
 
-
-
-levelNames[] = [""] * 7
-
-levelNames[0] = {	'H. TRIBUNAL SUPERIOR DE JUSTICIA DEL ESTADO DE BAJA CALIFORNIA',
-					'JUZGADO PRIMERO CIVIL DE MEXICALI, B.C. 25 DE OCTUBRE DE 2017',
-					''}
-
-w, h = 7dela, 5;
-levelOptions = [[0 for x in range(w)] for y in range(h)] 
-
-levelOptions = [0] * 7
-
-# AUTORIDAD
-levelOptions[0] = {	'H. TRIBUNAL SUPERIOR DE JUSTICIA',
-					'JUZGADO'}
-# SECRETARIA
-levelOptions[1] = { 'ACUERDOS EN EL RAMO',
-					'SECCION DE AMPAROS RAMO',
-					'NUEVO SISTEMA DE JUSITICIA',
-					'SALA',
-					'SECRETARIA'}
-
-# TIPO_RESOLUCION
-levelOptions[2] = { 'Acuerdos',
-					'Admisiones',
-					'Audiencias',
-					'Sentencias',
-					'Exhortos',
-					'Cuadernos de Amparo',
-					'Cuadernos de Antecedentes'}
+# print previous.text
 
 
 
-def scanHTML(prev_element):
 
-	int i = 0
 
-	while not found:
-		next = previous.find_next('span')
 
-		for option in levelOptions[i]:
 
-			if option in next.text:
-				found = True 
-				levelNames[i] = next.text
-				break
-		previous = next
 
 
 
