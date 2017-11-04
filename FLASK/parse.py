@@ -32,9 +32,11 @@ def main():
 
 	link = 'http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm'
 	print 'Scraping: ' + link
-	html = urllib2.urlopen(link)
+	# html = urllib2.urlopen(link)
+	# html = urllib2.urlopen("file://boletin.html")
 
-	soup = BeautifulSoup(html, 'html.parser')
+	# soup = BeautifulSoup(html, 'html.parser')
+	soup = BeautifulSoup(open("boletin.html"), 'html.parser')
 
 	firstElement = soup.find(text = re.compile(r'H. TRIBUNAL SUPERIOR'))
 
@@ -52,17 +54,25 @@ def main():
 # ======================================================================
 # i = El numero de columna en la base de datos
 def scanHTML(next_element, i ):
+
 	finished = False
 	alreadyIncremented = False
 	prev_element = next_element;
-	while not finished:
 
+
+	while not finished:
+		alreadyIncremented = False
 		# next_element = prev_element.find_next('span')
 
+		# =======EXIT CONDITION=======
 		if next_element.text.find('EDICTO') != -1:
 			print 'finishing'
 			print 'Edicto: ' + str(next_element.text.find('EDICTO'))
 			finished = True
+		#==============================
+
+		# print next_element
+
 		for option in levelOptions[i]:
 
 			if next_element.text.find(option) != -1:
@@ -83,7 +93,6 @@ def scanHTML(next_element, i ):
 						nextd = nextd.find_next('td')
 						DB_ENTRIES[i+2] = nextd.text.strip()
 
-
 						# TEXTO DE LA RESOLUCION
 						nextd = nextd.find_next('td')
 						DB_ENTRIES[i+3] = nextd.text.strip()
@@ -92,27 +101,44 @@ def scanHTML(next_element, i ):
 						next_element = nextd
 
 						# Find out if the table continues
-						nextd = next_element.find_next().find_next().find_next().find_next().find_next().find_next()
+						nextd = next_element.find_next().find_next().find_next().find_next().find_next()
+						i = 0;
+						# print nextd
 
 				next_element = next_element.find_next('span')
+				i = 0
+				#print next_element
 				alreadyIncremented = True
+				break
 				# if i <= 2:
 				# 	i += 1
 				# else:
 				# 	i = 2 
 				# 	next_element = prev_element.find_next('span')
 
-			next_element = next_element.find_next('span')
-			alreadyIncremented = True
-			break
-
-		if i < 2:
-			i += 1
-		else:
-			i = 0 
 			if not alreadyIncremented:
 				next_element = next_element.find_next('span')
-				alreadyIncremented = False
+				alreadyIncremented = True
+			# Not finding next because we did not find nothing
+			# next_element = next_element.find_next('span')
+			# alreadyIncremented = True
+			# # break
+			# i += 1
+			# if i > 2:
+			# 	i = 0
+
+		i += 1
+		if i >2:
+			i = 0
+			next_element = next_element.find_next('span')
+		# if not alreadyIncremented:
+		# 	if i < 2:
+		# 		i += 1
+		# 	else:
+		# 		i = 0 
+		# 		if not alreadyIncremented:
+		# 			next_element = next_element.find_next('span')
+		# 			alreadyIncremented = True
 
 
 
