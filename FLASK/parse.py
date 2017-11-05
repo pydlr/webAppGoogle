@@ -151,7 +151,7 @@ def scanHTML(next_element, i ):
 						DB_ENTRIES[1] = ''
 						DB_ENTRIES[2] = ''
 
-					DB_ENTRIES[i] = next_element.text
+					DB_ENTRIES[i] = next_element.text.strip()
 
 				
 				if (next_element.find_next().find_next().name.find('table') != -1):
@@ -201,6 +201,14 @@ def scanHTML(next_element, i ):
 							DB_ENTRIES[4].encode('utf-8'),
 							DB_ENTRIES[5].encode('utf-8'),
 							DB_ENTRIES[6].encode('utf-8')))
+						# cursor.callproc('sp_insert_resolucion',(
+						# 	DB_ENTRIES[0].encode('latin-1', 'replace') ,
+						# 	DB_ENTRIES[1].encode('latin-1', 'replace') ,
+						# 	DB_ENTRIES[2].encode('latin-1', 'replace') ,
+						# 	DB_ENTRIES[3].encode('latin-1', 'replace') ,
+						# 	DB_ENTRIES[4].encode('latin-1', 'replace') ,
+						# 	DB_ENTRIES[5].encode('latin-1', 'replace') ,
+						# 	DB_ENTRIES[6].encode('latin-1', 'replace')))
 
 						data = cursor.fetchall()
 						if len(data) is 0:

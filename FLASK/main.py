@@ -78,6 +78,35 @@ def showSignUp():
     # return render_template('signin.html')
     return render_template('demo_signup.html')
 
+@app.route('/showCase', methods=['POST'])
+def showCase():
+    # return render_template('signup.html')
+    # return render_template('signin.html')
+    print 'show' 
+
+    conn                = connect_to_cloudsql()
+    cursor              = conn.cursor()
+
+    expediente = request.form["inputCase"]
+    # query               = "SELECT no_expediente, autoridad, contenido from resoluciones where no_expediente = '" +  str(expediente) + "';"
+    # query               = "SELECT no_expediente, autoridad, contenido FROM `resoluciones` WHERE `autoridad` LIKE '%" + str(expediente) + "%';"
+
+    query = "SELECT no_expediente, autoridad, contenido FROM `resoluciones` WHERE (`autoridad` LIKE '%" + str(expediente) + "%') OR (no_expediente LIKE '%" + str(expediente) + "%');"
+
+    print query
+    # SELECT no_expediente, autoridad, contenido from resoluciones where no_expediente = '0209/2015';
+
+    cursor.execute(query)
+    # cursor.execute('SELECT * from tbl_user')
+
+    data = cursor.fetchall()
+    print data
+    conn.commit() 
+    cursor.close() 
+    conn.close()
+
+    return render_template('demo_showcase.html', data = data, caso = expediente)
+
 
 @app.route('/userHome/<path:path>/',methods=['GET','POST'])
 def userHome(path):
@@ -105,12 +134,9 @@ def logout():
 @app.route('/validateLogin',methods=['POST'])
 def validateLogin():
     try:
-        print request.form['inputEmail']
-        print ' simona'
+
         _username = request.form['inputEmail']
         _password = request.form['inputPassword']
-        print _username
-        print _password
 
         # connect to mysql
         conn    = connect_to_cloudsql()
