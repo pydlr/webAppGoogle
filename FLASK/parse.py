@@ -1,32 +1,54 @@
 import re
 import urllib2
 from bs4 import BeautifulSoup
+import  MySQLdb     as      mysql 
+import os
 
+
+#===========================   PARSER CONFIG =======================
 finished = False
 DB_ENTRIES 		= [""] * 7
 levelOptions 	= [0] * 7
-
-
 #AUTORIDAD
 levelOptions[0] = [	'H. TRIBUNAL SUPERIOR DE JUSTICIA',
 					'JUZGADO']
 # SECRETARIA
 levelOptions[1] = [ 'ACUERDOS EN EL RAMO',
 					'SECCION DE AMPAROS RAMO',
-					'NUEVO SISTEMA DE JUSITICIA',
-					'SALA',
+					'NUEVO SISTEMA DE JUSTICIA PENAL']
+
+levelOptions[2] = [ 'SALA',
 					'SECRETARIA']
 
 # TIPO_RESOLUCION
-levelOptions[2] = [ 'Acuerdos',
+levelOptions[3] = [ 'Acuerdos',
 					'Admisiones',
 					'Audiencias',
 					'Sentencias',
 					'Exhortos',
 					'Cuadernos de Amparo',
 					'Cuadernos De Antecedentes']
+#===========================  PARSER CONFIG =======================
 
-# ======================================================================
+
+
+#===========================  MYSQL  CONFIG =======================
+username    = 'root'
+passwd      = 'NO'
+dbname      = 'demo_users'
+hostname    = 'localhost'
+tablename   = 'resoluciones'
+
+
+
+# These environnment variables are configured in app.yaml
+CLOUDSQL_CONNECTION_NAME    = os.environ.get('CLOUDSQL_CONNECTION_NAME')
+CLOUDSQL_USER               = os.environ.get('CLOUDSQL_USER')
+CLOUDSQL_PASSWORD           = os.environ.get('CLOUDSQL_PASSWORD')
+#===========================  MYSQL  CONFIG =======================
+
+
+# ==========================  MAIN ================================
 def main():
 	
 
@@ -47,10 +69,51 @@ def main():
 
 	next_element = firstElement.find_next('span')
 
-	scanHTML(next_element , i+1)
-# ======================================================================
+	
 
-# ======================================================================
+	scanHTML(next_element , i+1)
+# ==========================    MAIN    ===============================
+
+
+# ==========================    SQL     =============================
+def connect_to_cloudsql():
+    print 'here'
+    # When deployed to App Engine, the 'SERVER_SOFTWARE' environment variable
+    # will be set to 'Google App Engine/version'.
+    if os.getenv('SERVER_SOFTWARE','').startswith('Google App Engine/'):
+        # Connect using the unix socket located at
+        # /cloudsql/cloudsql-connection-name.
+        cloudsql_unix_socket = os.path.join(
+            '/cloudsql', CLOUDSQL_CONNECTION_NAME)
+
+        conn = mysql.connect(
+            unix_socket = cloudsql_unix_socket,
+            user        = CLOUDSQL_USER,
+            passwd      = CLOUDSQL_PASSWORD,
+            db          = dbname)
+
+    # If the unix socket is unavailable, then try to connect using TCP. This 
+    # will work if you are running a local MySQL server or using the Clud SQL
+    # proxy, for example:
+    #
+    #   $ cloud_sql_proxy -instances=abogangster-182717:europe-west3:boletin=tcp:3306
+    #
+
+    else:
+        print "local mysql"
+        conn = mysql.connect(
+            host    = '127.0.0.1',
+            user    = 'root',
+            passwd  = 'NO',
+            db      = dbname)
+        print conn
+
+    return conn
+# ==========================    SQL     =============================
+
+
+
+# ===========================   PARSER  =============================
 # i = El numero de columna en la base de datos
 def scanHTML(next_element, i ):
 
@@ -59,61 +122,68 @@ def scanHTML(next_element, i ):
 	prev_element = next_element;
 
 
+	conn = connect_to_cloudsql()
+	cursor = conn.cursor()
+
 	while not finished:
 		alreadyIncremented = False
-		# next_element = prev_element.find_next('span')
 
 		# =======EXIT CONDITION=======
 		if next_element.text.find('EDICTO') != -1:
-			print 'finishing'
-			# print 'Edicto: ' + str(next_element.text.find('EDICTO'))
+			print 'The End'
 			finished = True
+			cursor.close()
+			conn.close()
 		#==============================
 
-		# =======EXIT CONDITION=======
-		# if next_element.text.find('MARIA DOLORES MORENO ROMERO') != -1:
-		# 	print 'finishing'
-		# 	# print 'Edicto: ' + str(next_element.text.find('EDICTO'))
-		# 	finished = True
-		#============================== 
-		
-
-		# print next_element
-		# print str(i) + 'looking for: ' + str(next_element)
 		for option in levelOptions[i]:
-
 			# If we find a match, but only if the matchin text is a title, 
 			# ignore table content 
 			if next_element.text.find(option) != -1	: 
 
+				# Solo si las coincidencias tienen tag b o i, asi esta el formato del boletin
 				if (next_element.parent.name.find('b') != -1 or 
 					next_element.parent.name.find('i') != -1):
-					DB_ENTRIES[i] = next_element.text.strip()
-					print str(i) + ' : Entry : ' + str(DB_ENTRIES[i].encode('utf-8'))
+
+					if i == 0:	
+						# Nueva Autoridad, limpiando columnas		
+						DB_ENTRIES[0] = ''
+						DB_ENTRIES[1] = ''
+						DB_ENTRIES[2] = ''
+
+					DB_ENTRIES[i] = next_element.text
+
+				
+				if (next_element.find_next().find_next().name.find('table') != -1):
+				# 	next_element.find_next().find_next().find_next().name.find('table') != -1):
+					i = 3
+					# Limpiar la columna siguiente
+					DB_ENTRIES[i] = ''
 
 				# Tabla
-				if i == 2:
+				if i == 3:
+
 					nextd = next_element.find_next('td')
-					# print 'find_next'
 
 					while  ((nextd.name.find('td') != -1) or
 							(nextd.name.find('tr') != -1) or
 							 nextd.parent.name.find('td') != -1):
 
+						# find the next td
 						if (nextd.name.find('tr') != -1):
-							# print 'here'
 							nextd = nextd.find_next('td')
-							# print nextd
+						# find the next td	
 						if (nextd.parent.name.find('td') != -1):
-							# print 'here'
 							nextd = nextd.parent
-							# print nextd
 
 						# NUMERO DE CASO EN LA HOJA 
-						DB_ENTRIES[i+1] = nextd.text.strip()
-
+						if nextd.text.find('/') == -1: # el if revisa si no hay este campo (numero de acuerdo)
+							DB_ENTRIES[i+1] = nextd.text.strip()
+							nextd = nextd.find_next('td')
+						else: 
+							DB_ENTRIES[i+1] = ''
+						
 						# NUMERO DE EXPEDIENTE
-						nextd = nextd.find_next('td')
 						DB_ENTRIES[i+2] = nextd.text.strip()
 
 						# TEXTO DE LA RESOLUCION
@@ -121,120 +191,42 @@ def scanHTML(next_element, i ):
 						DB_ENTRIES[i+3] = nextd.text.strip()
 
 						print str(i) + ': DB: ' + str(DB_ENTRIES)
+						
+						# MYSQL QUERY!!!!!!!!
+						cursor.callproc('sp_insert_resolucion',(
+							DB_ENTRIES[0].encode('utf-8'),
+							DB_ENTRIES[1].encode('utf-8'),
+							DB_ENTRIES[2].encode('utf-8'),
+							DB_ENTRIES[3].encode('utf-8'),
+							DB_ENTRIES[4].encode('utf-8'),
+							DB_ENTRIES[5].encode('utf-8'),
+							DB_ENTRIES[6].encode('utf-8')))
+
+						data = cursor.fetchall()
+						if len(data) is 0:
+							conn.commit()
+
+
+
 						next_element = nextd
-						# print next_element.name
 
 						# Find out if the table continues
 						nextd = nextd.find_next().find_next().find_next().find_next().find_next().find_next()
 						
-						# print 'nextd'
-						# print nextd
-					# print nextd.parent.name.find('td')
-					# exit()	
+							
 					i = 0; 
-				# print str(i) + ' : AFTER WHILE : ' + str(next_element)
 
-				# print str(i) + 'pre-break: ' + str(next_element)
 				next_element = next_element.find_next('span')
 				i = -1
-				#print next_element
-				alreadyIncremented = True
-				# print str(i) +  ' : break: ' + str(next_element)
 				break
-				# if i <= 2:
-				# 	i += 1
-				# else:
-				# 	i = 2 
-				# 	next_element = prev_element.find_next('span')
 
-			# if not alreadyIncremented:# CREO QUE ESTE FIND NEXT NO DEBERIA ESTAR AQUI, SOLO CUANDO SE LLEGA A 3 SE INCREMENTA
-			# 	next_element = next_element.find_next('span')
-			# 	print str(i) + 'next_element: ' + str(next_element)
-			# 	alreadyIncremented = True
-			# Not finding next because we did not find nothing
-			# next_element = next_element.find_next('span')
-			# alreadyIncremented = True
-			# # break
-			# i += 1
-			# if i > 2:
-			# 	i = 0
 
 		i += 1
-		if i >2:
+		if i >3:
 			
 			i = 0
-			# if not incremented yet!!!!!! TODO
 			next_element = next_element.find_next('span')
-			# print str(i) +  ' : past_3: ' + str(next_element)
-			# print 'blah' + str(next_element.text.find(levelOptions[2][6]))
-
-			# exit()
-
-		# if not alreadyIncremented:
-		# 	if i < 2:
-		# 		i += 1
-		# 	else:
-		# 		i = 0 
-		# 		if not alreadyIncremented:
-		# 			next_element = next_element.find_next('span')
-		# 			alreadyIncremented = True
-
-
-
-		prev_element = next_element
-
-
-
-# # ======================================================================
-# # i = El numero de columna en la base de datos
-# def scanHTML(prev_element, i ):
-# 	finished = False
-# 	while not finished:
-		
-# 		
-# 		next_element = prev_element.find_next('span')
-# 		if next_element.text.find('EDICTO') != -1:
-# 			print 'finishing'
-# 			print 'Edicto: ' + str(next_element.text.find('EDICTO'))
-# 			finished = True
-
-# 		for option in levelOptions[i]:
-
-# 			if next_element.text.find(option) != -1:
-
-# 				DB_ENTRIES[i] = next_element.text.strip()
-
-# 				if i == 2:
-# 					nextd = next_element.find_next('td')
-
-# 					while nextd.name.find('td') != -1:
-
-# 						# NUMERO DE CASO EN LA HOJA 
-# 						DB_ENTRIES[i+1] = nextd.text.strip()
-
-# 						# NUMERO DE EXPEDIENTE
-# 						nextd = nextd.find_next('td')
-# 						DB_ENTRIES[i+2] = nextd.text.strip()
-
-
-# 						# TEXTO DE LA RESOLUCION
-# 						nextd = nextd.find_next('td')
-# 						DB_ENTRIES[i+3] = nextd.text.strip()
-
-# 						print 'DB: ' + str(DB_ENTRIES)
-# 						next_element = nextd
-
-# 						# Find out if the table continues
-# 						nextd = next_element.find_next().find_next().find_next().find_next().find_next().find_next()
-
-# 				i += 1
-# 				if i > 2:
-# 					i = 2
-
-# 				break
-# 		prev_element = next_element
-
-
+# ===========================   PARSER  =============================
 
 
 

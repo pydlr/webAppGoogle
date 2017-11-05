@@ -76,6 +76,17 @@ CREATE TABLE `demo_users`.`userinfo` (
   `user_password` VARCHAR(127) NULL,
   PRIMARY KEY (`user_id`));
 
+  CREATE TABLE `demo_users`.`userinfo` (
+  `user_id` BIGINT AUTO_INCREMENT,
+  `user_name` VARCHAR(45) NULL,
+  `user_username` VARCHAR(45) NULL,
+  `user_password` VARCHAR(127) NULL,
+  PRIMARY KEY (`user_id`));
+
+CREATE TABLE resoluciones (autoridad TINYTEXT, ramo_secretaria TINYTEXT, sala_secretaria TINYTEXT, tipo VARCHAR(48), no_resolucion VARCHAR(8), no_expediente VARCHAR(16), contenido TINYTEXT);
+
+
+territorio VARCHAR(24), materia VARCHAR(8), juez TINYTEXT, regulado VARCHAR(8), no_juez VARCHAR(8), no_expediente VARCHAR(4), año_expediente VARCHAR(4), fecha_renglon DATE, acusado TINYTEXT, victima TINYTEXT, tipo VARCHAR(24));
 
 
 # Add columns
@@ -299,5 +310,44 @@ BEGIN
 END //
 DELIMITER ;
 
+
+CREATE TABLE resoluciones (autoridad TINYTEXT, ramo_secretaria TINYTEXT, sala_secretaria TINYTEXT, tipo VARCHAR(48), no_resolucion VARCHAR(8), no_expediente VARCHAR(16), contenido TEXT);
+
+DELIMITER //
+CREATE PROCEDURE `sp_insert_resolucion`(
+    IN p_autoridad TINYTEXT,
+    IN p_ramo_secretaria TINYTEXT,
+    IN p_sala_secretaria TINYTEXT,
+    IN p_tipo VARCHAR(48),
+    IN p_no_resolucion VARCHAR(8),
+    IN p_no_expediente VARCHAR(16),
+    IN p_contenido TEXT
+)
+BEGIN
+     
+    insert into resoluciones
+    (
+        autoridad, 
+        ramo_secretaria,
+        sala_secretaria,
+        tipo,
+        no_resolucion,
+        no_expediente, 
+        contenido
+
+    )
+    values
+    (
+        p_autoridad, 
+        p_ramo_secretaria,
+        p_sala_secretaria,
+        p_tipo,
+        p_no_resolucion,
+        p_no_expediente, 
+        p_contenido
+    );
+     
+END //
+DELIMITER ;
 
 
