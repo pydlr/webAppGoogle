@@ -82,10 +82,14 @@ def scanHTML(next_element, i ):
 		# print str(i) + 'looking for: ' + str(next_element)
 		for option in levelOptions[i]:
 
-			if next_element.text.find(option) != -1:
+			# If we find a match, but only if the matchin text is a title, 
+			# ignore table content 
+			if next_element.text.find(option) != -1	: 
 
-				DB_ENTRIES[i] = next_element.text.strip()
-				print str(i) + ' : Entry : ' + str(DB_ENTRIES[i].encode('utf-8'))
+				if (next_element.parent.name.find('b') != -1 or 
+					next_element.parent.name.find('i') != -1):
+					DB_ENTRIES[i] = next_element.text.strip()
+					print str(i) + ' : Entry : ' + str(DB_ENTRIES[i].encode('utf-8'))
 
 				# Tabla
 				if i == 2:
@@ -93,11 +97,16 @@ def scanHTML(next_element, i ):
 					# print 'find_next'
 
 					while  ((nextd.name.find('td') != -1) or
-							(nextd.name.find('tr') != -1)):
+							(nextd.name.find('tr') != -1) or
+							 nextd.parent.name.find('td') != -1):
 
 						if (nextd.name.find('tr') != -1):
 							# print 'here'
 							nextd = nextd.find_next('td')
+							# print nextd
+						if (nextd.parent.name.find('td') != -1):
+							# print 'here'
+							nextd = nextd.parent
 							# print nextd
 
 						# NUMERO DE CASO EN LA HOJA 
@@ -116,17 +125,18 @@ def scanHTML(next_element, i ):
 						# print next_element.name
 
 						# Find out if the table continues
-						nextd = nextd.find_next().find_next().find_next().find_next().find_next()
+						nextd = nextd.find_next().find_next().find_next().find_next().find_next().find_next()
 						
 						# print 'nextd'
 						# print nextd
-						
+					# print nextd.parent.name.find('td')
+					# exit()	
 					i = 0; 
 				# print str(i) + ' : AFTER WHILE : ' + str(next_element)
 
 				# print str(i) + 'pre-break: ' + str(next_element)
 				next_element = next_element.find_next('span')
-				i = 0
+				i = -1
 				#print next_element
 				alreadyIncremented = True
 				# print str(i) +  ' : break: ' + str(next_element)
