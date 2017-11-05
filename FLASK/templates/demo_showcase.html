@@ -29,7 +29,81 @@
       <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../static/assets/ico/apple-touch-icon-72-precomposed.png">
                     <link rel="apple-touch-icon-precomposed" href="../static/assets/ico/apple-touch-icon-57-precomposed.png">
                                    <link rel="shortcut icon" href="../static/assets/ico/favicon.png">
+  
+<script src="../static/assets/js/jquery.js"></script>
+
+  <!-- <script>
+       $(function () 
+       { 
+
+          $('#addID').click(function(datos) 
+          {
+            var order = document.getElementById('addID').name;
+            console.log(order);
+            console.log(String(datos));
+            console.log("This is working so far No 5");
+            $.ajax(
+            {
+
+              url: '/addCase',
+              data: datos,
+              type: 'POST',
+              success: function(response) 
+              {
+                console.log("success");
+              },
+              error: function(error) 
+              {
+                console.log(" Debug error in js");
+              }
+            });
+          });
+        })
+  </script> -->
+
+
+  <script>
+       function insertMSQL()
+       {
+        var no_case = String(arguments[0]);
+        console.log(no_case);
+        // $.ajax(
+        // {
+        //     url: '/showCase',
+        //     data: no_case,
+        //     type: 'POST',
+        //     success: function(response) 
+        //     {
+        //         console.log('success');
+        //     },
+        //     error: function(error) 
+        //     {
+        //         console.log(" Debug error in js");
+        //     }
+        // });
+        // var url   = "/addCase";
+        // var data = new FormData();
+        // data.append("case", no_case);
+        // var xhr = new XMLHttpRequest();
+        // xhr.open("POST", url, true);
+
+        // //Send the proper header information along with the request
+        // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        // xhr.send(data);
+        case1 = 'case';
+
+        $.post( 
+          "/addCase", 
+          { case: no_case });
+
+
+       }
+  </script>
+
   </head>
+
+  
 
   <body>
 
@@ -84,6 +158,7 @@
 
 
 
+
     <div class="container">
 
       <!-- Main hero unit for a primary marketing message or call to action -->
@@ -96,14 +171,17 @@
                   <th scope="col">EXPEDIENTE</th>
                   <th scope="col">AUTORIDAD</th>
                   <th scope="col">CONTENIDO</th>
+                  <th scope="col"></th>
               </tr>
           </thead>
           <tbody>
               {% for row in data %}
                   <tr >
                   {% for d in row %}
-                      <td  ><a href='/{{d.decode('utf-8')}}' style= "color:black;">{{ d.decode('utf-8') }}</a></td>
+                      <td >{{ d.decode('utf-8') }}</td>
                   {% endfor %}
+                      <td><a class="btn btn-primary btn-large" type="button" id="addID"  value = "Add"  name={{row[0]}} 
+                         onclick="insertMSQL('{{row[0]}}')"/>Add</td>
                   </tr>
               {% endfor %}
           </tbody>
@@ -113,9 +191,9 @@
       </div>
     </div>
 
-      <footer style="margin-top:80px ; margin-left: 80px"">
+    <footer style="margin-top:80px ; margin-left: 80px"">
         <h5 class="brand" >&copy; IO Patterns 2017</h5>
-      </footer>
+    </footer>
 
     </div> <!-- /container -->
 
@@ -135,6 +213,9 @@
     <script src="../static/assets/js/bootstrap-collapse.js"></script>
     <script src="../static/assets/js/bootstrap-carousel.js"></script>
     <script src="../static/assets/js/bootstrap-typeahead.js"></script>
+
+    
+    
 
   </body>
 </html>

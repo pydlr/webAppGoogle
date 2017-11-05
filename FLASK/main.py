@@ -22,9 +22,7 @@ CLOUDSQL_CONNECTION_NAME    = os.environ.get('CLOUDSQL_CONNECTION_NAME')
 CLOUDSQL_USER               = os.environ.get('CLOUDSQL_USER')
 CLOUDSQL_PASSWORD           = os.environ.get('CLOUDSQL_PASSWORD')
 
-def connect_to_cloudsql():
-    print 'here'
-    # When deployed to App Engine, the 'SERVER_SOFTWARE' environment variable
+def connect_to_cloudsql():    # When deployed to App Engine, the 'SERVER_SOFTWARE' environment variable
     # will be set to 'Google App Engine/version'.
     if os.getenv('SERVER_SOFTWARE','').startswith('Google App Engine/'):
         # Connect using the unix socket located at
@@ -46,7 +44,7 @@ def connect_to_cloudsql():
     #
 
     else:
-        print "local mysql"
+        print "Using local mysql:"
         conn = mysql.connect(
             host    = '127.0.0.1',
             user    = 'root',
@@ -84,32 +82,28 @@ def showSignUp():
 
 @app.route('/showCase', methods=['POST'])
 def showCase():
-    # return render_template('signup.html')
-    # return render_template('signin.html')
-    print 'show' 
 
     conn                = connect_to_cloudsql()
     cursor              = conn.cursor()
-
-    expediente = request.form["inputCase"]
+    expediente          = request.form["inputCase"]
     # query               = "SELECT no_expediente, autoridad, contenido from resoluciones where no_expediente = '" +  str(expediente) + "';"
     # query               = "SELECT no_expediente, autoridad, contenido FROM `resoluciones` WHERE `autoridad` LIKE '%" + str(expediente) + "%';"
-
     query = "SELECT no_expediente, autoridad, contenido FROM `resoluciones` WHERE (`autoridad` LIKE '%" + str(expediente) + "%') OR (no_expediente LIKE '%" + str(expediente) + "%');"
 
-    print query
-    # SELECT no_expediente, autoridad, contenido from resoluciones where no_expediente = '0209/2015';
-
     cursor.execute(query)
-    # cursor.execute('SELECT * from tbl_user')
-
     data = cursor.fetchall()
-    print data
     conn.commit() 
     cursor.close() 
     conn.close()
 
     return render_template('demo_showcase.html', data = data, caso = expediente)
+
+@app.route('/addCase', methods=['POST'])
+def addCase():
+        # print request.form['case']
+        print request.form["case"]
+        print 'case'
+        return "d"
 
 
 @app.route('/userHome/<path:path>/',methods=['GET','POST'])
