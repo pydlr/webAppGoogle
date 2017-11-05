@@ -59,7 +59,11 @@ def connect_to_cloudsql():
 @app.route('/')
 @app.route('/main')
 def main():
-    return render_template('index.html')
+    if session.get('user'):
+        url = '/userHome/' + str(session.get('user'))
+        return redirect(url)
+    else:
+        return render_template('index.html')
 
 # This is a dummy function to test cathing any path and using it to render content
 # @app.route('/public/<path:path>/')
