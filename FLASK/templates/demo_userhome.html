@@ -25,9 +25,7 @@
       <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../../static/assets/ico/apple-touch-icon-72-precomposed.png">
                     <link rel="apple-touch-icon-precomposed" href="../../static/assets/ico/apple-touch-icon-57-precomposed.png">
                                    <link rel="shortcut icon" href="../../static/assets/ico/favicon.png">
-
-
-    <link  href="../../static/signup.css" rel="stylesheet">
+                                   
     <script src="../../static/js/jquery-3.2.1.js"></script>
     <script src="../../static/js/signUp.js"></script>
 
@@ -55,7 +53,7 @@
           <a class="brand" href="/">Boletin BC</a>
           <div id ="navbar" class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="/main">Home</a></li>
+              <li class="active"><a href="/">Home</a></li>
             </ul>
             <ul class="nav navbar-nav pull-right">
               
@@ -90,12 +88,50 @@
       </div>
       </div>
 
-      <footer style="margin-top:80px ; margin-left: 80px"">
-        <h5 class="brand" >&copy; IO Patterns 2017</h5>
-      </footer>
-
-
     </div> <!-- /container -->
+
+
+    <!-- ====================================== TABLE ================================= -->
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit" >
+        <!-- <h1>Sveiki atvykę!</h1> -->
+        <div class="table-responsive">
+        <table class="table table-striped table-inverse" > 
+          <caption >
+            <h1 class="row title" style='font-weight: lighter; color:black'>Mis Casos:</h1>
+          </caption>
+          <thead>
+              <tr >
+                  <th scope="col">EXPEDIENTE</th>
+                  <th scope="col">AUTORIDAD</th>
+                  <th scope="col">CONTENIDO</th>
+                  <th scope="col"></th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for row in data %}
+                  <tr >
+                  {% for d in row %}
+                      <td >{{ d.decode('utf-8') }}</td>
+                  {% endfor %}
+                      <td><a class="btn btn-primary btn-large" type="button" id="addID"  value = "Add"  name={{row[0]}} 
+                         onclick="insertMSQL('{{row[0]}}','{{row[1]}}')"/>Add</td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      </div>
+    </div>
+
+
+    <footer style="margin-top:80px ; margin-left: 80px"">
+        <h5 class="brand" >&copy; IO Patterns 2017</h5>
+    </footer>
+    <!-- ====================================== TABLE ================================= -->
 
     <!-- Le javascript
     ================================================== -->

@@ -194,21 +194,13 @@ def scanHTML(next_element, i ):
 						
 						# MYSQL QUERY!!!!!!!!
 						cursor.callproc('sp_insert_resolucion',(
-							DB_ENTRIES[0].encode('utf-8'),
-							DB_ENTRIES[1].encode('utf-8'),
-							DB_ENTRIES[2].encode('utf-8'),
-							DB_ENTRIES[3].encode('utf-8'),
-							DB_ENTRIES[4].encode('utf-8'),
-							DB_ENTRIES[5].encode('utf-8'),
-							DB_ENTRIES[6].encode('utf-8')))
-						# cursor.callproc('sp_insert_resolucion',(
-						# 	DB_ENTRIES[0].encode('latin-1', 'replace') ,
-						# 	DB_ENTRIES[1].encode('latin-1', 'replace') ,
-						# 	DB_ENTRIES[2].encode('latin-1', 'replace') ,
-						# 	DB_ENTRIES[3].encode('latin-1', 'replace') ,
-						# 	DB_ENTRIES[4].encode('latin-1', 'replace') ,
-						# 	DB_ENTRIES[5].encode('latin-1', 'replace') ,
-						# 	DB_ENTRIES[6].encode('latin-1', 'replace')))
+							DB_ENTRIES[0].encode('utf-8').replace('\n', ' ').replace('\r', ''),
+							DB_ENTRIES[1].encode('utf-8').replace('\n', ' ').replace('\r', ''),
+							DB_ENTRIES[2].encode('utf-8').replace('\n', ' ').replace('\r', ''),
+							DB_ENTRIES[3].encode('utf-8').replace('\n', ' ').replace('\r', ''),
+							DB_ENTRIES[4].encode('utf-8').replace('\n', ' ').replace('\r', ''),
+							DB_ENTRIES[5].encode('utf-8').replace('\n', ' ').replace('\r', ''),
+							DB_ENTRIES[6].encode('utf-8').replace('\n', ' ').replace('\r', '')))
 
 						data = cursor.fetchall()
 						if len(data) is 0:
