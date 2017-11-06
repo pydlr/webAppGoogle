@@ -81,10 +81,10 @@
 
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="hero-unit" style="background-image: url(/../static/Uploads/geminis32_3.jpg);">
-        <h1 style='font-weight: lighter;'>Sveiki atvykę!</h1>
+        <h1 style='font-weight: lighter;'>Bienvenido!</h1>
         <h1 style='font-weight: lighter;'>{{username}}</h1>
         <p></p>
-        <p><a class="btn btn-primary btn-large" href="showSignUp">Add case</a></p>
+        <!-- <p><a class="btn btn-primary btn-large" href="showSignUp">Add case</a></p> -->
       </div>
       </div>
 
@@ -117,7 +117,7 @@
                       <td >{{ d.decode('utf-8') }}</td>
                   {% endfor %}
                       <td><a class="btn btn-primary btn-large" type="button" id="addID"  value = "Add"  name={{row[0]}} 
-                         onclick="insertMSQL('{{row[0]}}','{{row[1]}}')"/>Add</td>
+                         onclick="removeMSQL('{{row[0]}}','{{row[1]}}')"/>Remove</td>
                   </tr>
               {% endfor %}
           </tbody>
@@ -149,6 +149,18 @@
     <script src="../../static/assets/js/bootstrap-collapse.js"></script>
     <script src="../../static/assets/js/bootstrap-carousel.js"></script>
     <script src="../../static/assets/js/bootstrap-typeahead.js"></script>
+
+    <script>
+         function removeMSQL()
+         {
+          var no_case = String(arguments[0]);
+          var autoridad = String(arguments[1]);
+          $.post( 
+            "/removeCase", 
+            {  case : no_case,
+                auto : autoridad} ) ;
+         }
+    </script>
 
   </body>
 </html>

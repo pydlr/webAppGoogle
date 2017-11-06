@@ -82,6 +82,22 @@ END //
 DELIMITER ;
 
 
+delete from orders 
+where id_users = 1 and id_product = 2
+limit 1
+
+DELIMITER //
+CREATE PROCEDURE `sp_delete_usercase`(
+    IN p_expediente VARCHAR(16),
+    IN p_name VARCHAR(45),
+    IN p_location TINYTEXT
+)
+BEGIN
+    delete from usercases where no_expediente = p_expediente and user_name = p_name;
+END //
+DELIMITER ;
+
+
 DELIMITER //
 CREATE PROCEDURE `sp_validateLogin`(
 IN p_username VARCHAR(45)
@@ -92,6 +108,8 @@ END //
 DELIMITER ;
 
 
+
+"SELECT distinct no_expediente FROM usercases WHERE user_name = '" + str(name) + "' ORDER BY no_expediente;" 
 
 CREATE TABLE `Boletin0`.`tbl_user` (
   `user_id` BIGINT AUTO_INCREMENT,

@@ -3,7 +3,7 @@ from    werkzeug    import  generate_password_hash, check_password_hash
 import  MySQLdb     as      mysql 
 import  os
 import  uuid
-import   parse_class 
+import  parse_class 
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/Uploads'
@@ -55,13 +55,18 @@ def connect_to_cloudsql():    # When deployed to App Engine, the 'SERVER_SOFTWAR
 
     return conn
 
-# 
 @app.route('/parseHtml')
 def parseHml():
     # Call parser, false to not save to database
     # TODO: add options for database name etc.
     parser = parse_class.Parser(False) 
     return render_template('demo_signup.html')
+
+@app.route('/parseToday', methods=['GET','POST'])
+def parseToday():
+    todayslink = str(request.args.get('link'))
+    parser = parse_class.Parser(True, False, todayslink)
+    return 'Finished'
 
 @app.route('/')
 def main():
@@ -113,18 +118,43 @@ def addCase():
             try:
                 conn    = connect_to_cloudsql()
                 cursor  = conn.cursor()
-                print case
-                print user
-                print autoridad
                 cursor.callproc('sp_insert_usercase', (case, user, autoridad ) )
                 data    = cursor.fetchall()
                 conn.commit()
                 cursor.close()
                 conn.close()
+                return data
             except error:
-                print error 
+                return error
 
         return "LSD"
+
+@app.route('/removeCase', methods=['POST'])
+def removeCase():
+        print 'remove'
+        case        = request.form["case"]
+        autoridad   = request.form["auto"]
+        user        = str(session.get('user'))
+
+        if user:
+            try:
+                conn    = connect_to_cloudsql()
+                cursor  = conn.cursor()
+                cursor.callproc('sp_delete_usercase', (case, user, autoridad ) )
+                data    = cursor.fetchall()
+                conn.commit()
+                cursor.close()
+                conn.close()
+                print data
+                path = '/'
+                return redirect(path)
+
+            except error:
+                print error 
+                return error
+
+        return "LSD"
+
 
 
 @app.route('/userHome/<path:path>/',methods=['GET','POST'])
@@ -148,8 +178,6 @@ def userHome(path):
             big_query = big_query + "'" + str(case[0]) + "', "
         big_query = big_query + " '0000/0000');"
 
-        print big_query
-
         cursor.execute(big_query)
         big_query_data = cursor.fetchall()
 
@@ -161,7 +189,6 @@ def userHome(path):
             data = big_query_data)
     else:
         return render_template('demo_error.html',error = 'Unauthorized Access')
-
 
 @app.route('/logout')
 def logout():
@@ -228,7 +255,6 @@ def getProfile():
     except Exception as e:
         print "5"
         return render_template('demo_error.html', error = str(e))
-
 
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():

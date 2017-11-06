@@ -91,10 +91,10 @@ class MySQLConnection:
 class Parser():
 
 	# ==========================  MAIN ================================
-	def __init__(self, writeToDatabase = False):
+	def __init__(self, writeToDatabase = False, localfile = False, link = 'http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm'):
 		
 
-		link = 'http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm'
+		# link = 'http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm'
 		print 'Scraping: ' + link
 
 		self.database = writeToDatabase
@@ -103,19 +103,18 @@ class Parser():
 		else:
 			print 'Printing to Terminal only'
 
-
-		# html = urllib2.urlopen(link)
-		# html = urllib2.urlopen("file://boletin.html")
-
-		# soup = BeautifulSoup(html, 'html.parser')
-		soup = BeautifulSoup(open("boletin.html"), 'html.parser')
+		if not localfile:
+			html = urllib2.urlopen(link)
+			soup = BeautifulSoup(html, 'html.parser')
+		else:
+			soup = BeautifulSoup(open("boletin.html"), 'html.parser')
 
 		firstElement = soup.find(text = re.compile(r'H. TRIBUNAL SUPERIOR'))
 
 		AUTORIDAD = firstElement
 		i = 0
-		DB_ENTRIES[i] = AUTORIDAD
-		print 'Autoridad: ' + str(AUTORIDAD)
+		DB_ENTRIES[i] = AUTORIDAD.encode('utf-8').replace('\n', ' ').replace('\r', '')
+		print 'Autoridad: ' + str(DB_ENTRIES[i])
 
 		next_element = firstElement.find_next('span')
 
@@ -246,7 +245,14 @@ if __name__ == "__main__":
 						help="save to database",
 	                    action="store_true",
 	                    default = False)
+
+	parser.add_argument("-l",
+						"--localfile", 
+						help="save to database",
+	                    action="store_true",
+	                    default = False)
+
 	args = parser.parse_args()
 
-	boletinParse = Parser(args.database)
+	boletinParse = Parser(args.database, args.localfile)
 	
