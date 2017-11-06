@@ -129,12 +129,14 @@ def addCase():
 
         return "LSD"
 
-@app.route('/removeCase', methods=['POST'])
+@app.route('/removeCase', methods=['GET','POST'])
 def removeCase():
         print 'remove'
         case        = request.form["case"]
         autoridad   = request.form["auto"]
         user        = str(session.get('user'))
+        print case
+        print autoridad
 
         if user:
             try:
