@@ -40,6 +40,18 @@
 
   <body>
 
+  <!-- =========================================== FACEBOOK SDK =======================   -->
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.10&appId=270138033508958';
+      fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+    <!-- =========================================== FACEBOOK SDK =======================   -->
+
                  <!-- NAVBAR
 ================================================== -->
 
@@ -115,6 +127,13 @@
                   </a>
                 </p>
             </div>
+
+            <!-- ============================  FACEBOOK LOGIN BUTTON ============================= -->
+            <div class="fb-login-button" data-width="50" data-max-rows="1" data-size="large" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false" 
+            scope="public_profile, email" onlogin="checkLoginState();"></div>
+            <!-- ============================  FACEBOOK LOGIN BUTTON ============================= -->
+
+
           </form>
 
       </div>
@@ -144,6 +163,63 @@
     <!-- <script src="../static/assets/js/bootstrap-typeahead.js"></script> -->
 
     <script src="../static/js/signUp.js"></script>
+
+    <script>
+         function checkLoginState()
+         {
+          console.log('simon')
+          FB.getLoginStatus(function(response) 
+                            {
+                              console.log(response.status);
+                              testAPI();
+                              
+
+                              // statusChangeCallback(response);
+                            });
+         }
+
+         function testAPI() 
+         {
+            console.log('Welcome!  Fetching your information.... ');
+            FB.api('/me', function(response) 
+            {
+              console.log('Successful login for: ' + response.name);
+              var name = response.name;
+              var mail = response.email;
+              if (typeof mail == 'undefined'){
+                mail = 'default';
+              }
+              console.log(mail);
+              signUp(name,mail);
+            });
+          }
+
+          function signUp()
+          {
+                  $.ajax(
+                  {
+                      url: '/signUp',
+                      data: { fb : '1',
+                              fbName : arguments[0],
+                              fbEmail: arguments[1]
+                            },
+                      type: 'POST',
+                      success: function(response) {
+                          var str1 = "/userHome/";
+                          var str2 = response;
+                          var path = str1.concat(str2);
+                          console.log(path);
+
+                          window.location = path;
+                      },
+                      error: function(error) {
+                          console.log(" Debug error in js");
+                          // window.location = /error;
+                      }
+                  });
+          }
+    </script>
+    
 
   </body>
 </html>

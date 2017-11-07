@@ -64,8 +64,6 @@
                 </form>
               </li> 
 
-
-              <!-- <li><a href="/showSignUp"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li> -->
               <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
               
               
@@ -84,7 +82,6 @@
         <h1 style='font-weight: lighter;'>Bienvenido!</h1>
         <h1 style='font-weight: lighter;'>{{username}}</h1>
         <p></p>
-        <!-- <p><a class="btn btn-primary btn-large" href="showSignUp">Add case</a></p> -->
       </div>
       </div>
 
@@ -112,12 +109,19 @@
           </thead>
           <tbody>
               {% for row in data %}
-                  <tr >
+                  <!-- <tr id ="{{row[0]}}"> -->
+                  
+                  <tr id ="{{row[1]}}">
                   {% for d in row %}
                       <td >{{ d.decode('utf-8') }}</td>
                   {% endfor %}
-                      <td><a class="btn btn-primary btn-large" type="button" id="addID"  value = "Add"  name={{row[0]}} 
-                         onclick="removeMSQL('{{row[0]}}','{{row[1]}}')"/>Remove</td>
+                      <td><a class    = "btn btn-primary btn-large" 
+                              type    = "button" 
+                              id      = "addID"  
+                              value   = "Add"  
+                              name    = {{row[0]}}  
+                              onclick = "removeMSQL(this, '{{row[0]}}', '{{row[1]}}')"
+                         />Remove</td>
                   </tr>
               {% endfor %}
           </tbody>
@@ -151,13 +155,17 @@
     <script src="../../static/assets/js/bootstrap-typeahead.js"></script>
 
     <script>
-         function removeMSQL()
+         function removeMSQL(link, expediente, autoridad)
          {
-          var no_case = String(arguments[0]);
-          var autoridad = String(arguments[1]);
+          // Obtain the row where the current <a> is and remove it
+          var row = link.parentNode.parentNode;
+          var table = row.parentNode; 
+          table.removeChild(row); 
+
+         // POST request to this url in flask, delete this case from DB
           $.post( 
             "/removeCase", 
-            {  case : no_case,
+            {  case : expediente,
                 auto : autoridad} ) ;
          }
     </script>

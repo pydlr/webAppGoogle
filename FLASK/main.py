@@ -113,25 +113,34 @@ def addCase():
         case        = request.form["case"]
         autoridad   = request.form["auto"]
         user        = str(session.get('user'))
-
         if user:
             try:
                 conn    = connect_to_cloudsql()
                 cursor  = conn.cursor()
                 cursor.callproc('sp_insert_usercase', (case, user, autoridad ) )
                 data    = cursor.fetchall()
-                conn.commit()
-                cursor.close()
-                conn.close()
-                return data
-            except error:
+                print data
+                print len(data)
+                
+                if len(data) == 0:
+                    conn.commit()
+                    cursor.close()
+                    conn.close()
+                    print 'Added case ' + str(case) + ' to user ' + str(user) 
+                    return 'Added case ' + str(case) + ' to user ' + str(user) 
+                else:
+                    cursor.close()
+                    conn.close()
+                    print 'Could not add case'
+                    return 'Could not add case'
+            except Exception as error:
                 return error
 
         return "LSD"
 
 @app.route('/removeCase', methods=['GET','POST'])
 def removeCase():
-        print 'remove'
+        print 'Remove...'
         case        = request.form["case"]
         autoridad   = request.form["auto"]
         user        = str(session.get('user'))
@@ -151,46 +160,48 @@ def removeCase():
                 path = '/'
                 return redirect(path)
 
-            except error:
+            except Exception as error:
                 print error 
                 return error
 
         return "LSD"
 
-
-
 @app.route('/userHome/<path:path>/',methods=['GET','POST'])
 def userHome(path):
-    if str(session.get('user')) == str(path):
-        name = str(session.get('user'))
-        conn    = connect_to_cloudsql()
-        cursor  = conn.cursor()
-        # cursor.callproc('sp_validateLogin',(_username,))
-        mysql_userdata_query = "SELECT * FROM userinfo WHERE user_name = '" + str(path) + "';"
-        cursor.execute(mysql_userdata_query)
-        userdata    = cursor.fetchall()
+    try:
+        if str(session.get('user')) == str(path):
+            name = str(session.get('user'))
+            conn    = connect_to_cloudsql()
+            cursor  = conn.cursor()
+            # cursor.callproc('sp_validateLogin',(_username,))
+            mysql_userdata_query = "SELECT * FROM userinfo WHERE user_name = '" + str(path) + "';"
+            cursor.execute(mysql_userdata_query)
+            userdata    = cursor.fetchall()
 
-        mysql_cases_query = "SELECT distinct no_expediente FROM usercases WHERE user_name = '" + str(name) + "' ORDER BY no_expediente;" 
+            mysql_cases_query = "SELECT distinct no_expediente FROM usercases WHERE user_name = '" + str(name) + "' ORDER BY no_expediente;" 
 
-        cursor.execute(mysql_cases_query)
-        casesdata    = cursor.fetchall()
+            cursor.execute(mysql_cases_query)
+            casesdata    = cursor.fetchall()
 
-        big_query = "SELECT no_expediente, autoridad, contenido FROM resoluciones WHERE no_expediente IN ("
-        for case in casesdata:
-            big_query = big_query + "'" + str(case[0]) + "', "
-        big_query = big_query + " '0000/0000');"
+            big_query = "SELECT no_expediente, autoridad, contenido FROM resoluciones WHERE no_expediente IN ("
+            for case in casesdata:
+                big_query = big_query + "'" + str(case[0]) + "', "
+            big_query = big_query + " '0000/0000');"
 
-        cursor.execute(big_query)
-        big_query_data = cursor.fetchall()
+            cursor.execute(big_query)
+            big_query_data = cursor.fetchall()
 
-        cursor.close()
-        conn.close()
+            cursor.close()
+            conn.close()
 
-        return render_template('demo_userhome.html', 
-            username=userdata[0][1],
-            data = big_query_data)
-    else:
-        return render_template('demo_error.html',error = 'Unauthorized Access')
+            return render_template('demo_userhome.html', 
+                username=userdata[0][1],
+                data = big_query_data)
+        else:
+            return render_template('demo_error.html',error = 'Unauthorized Access')
+
+    except Exception as e:
+        return render_template('demo_error.html', error = e)
 
 @app.route('/logout')
 def logout():
@@ -262,21 +273,38 @@ def getProfile():
 def signUp():
 
     try:
-        _name       = request.form['inputName']
-        _email      = request.form['inputEmailSignUp']
-        _password   = request.form['inputPasswordSignUp']
+        if request.form['fb']:
+            _name       = request.form['fbName']
+            print _name
+            if request.form['fbEmail']:
+                print "pp"
+                _email   = request.form['fbEmail']
+                print _email
+            else: 
+                print "email"
+                _email = 'Undefined'
+
+            _password   = "default"
+
+            print _name
+            print _email
+            print _password
+            
+        else:
+            print "Using own Signup"
+            _name       = request.form['inputName']
+            _email      = request.form['inputEmailSignUp']
+            _password   = request.form['inputPasswordSignUp']
         
         # validate the received values
         if _name and _email and _password:
-
+            
             # All Good, let's call MySQL
             # conn                = mysql.connect(host=hostname,user=username,passwd=passwd,db=dbname)
             conn                = connect_to_cloudsql()
             cursor              = conn.cursor()
             _hashed_password    = generate_password_hash(_password)
-            print 'simon'
             cursor.callproc('sp_create_user',(_name,_email,_hashed_password))
-            print 'simona'
             data                = cursor.fetchall()
 
             if len(data) is 0:
@@ -291,6 +319,7 @@ def signUp():
     except Exception as e:
 
         return json.dumps({'error':str(e)})
+
     finally:
         # TODO: This shit is bad, if name email and password are not valid, no cursor nor conn will
         # have been created so here they will be null, fix this!
