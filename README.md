@@ -22,6 +22,6 @@ Procedimientos:
 BUGS y TODOs:
 - Error cuando buscas con un numero cualquiera (123/234 esta bien porque tiene diagonal)
 - Error al intentar agregar un caso que ya esta agregado
+- Bootstrap: reactivo a tamaño de pantalla, iconos en botones y fuentes
 - Android gui
 - Google maps
-- 
