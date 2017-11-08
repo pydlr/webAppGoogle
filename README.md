@@ -20,8 +20,9 @@ Procedimientos:
 - sp_delete_user
 
 BUGS y TODOs:
-- Error cuando buscas con un numero cualquiera (123/234 esta bien porque tiene diagonal)
 - Error al intentar agregar un caso que ya esta agregado
+- Error: cuando un caso tiene varias resoluciones, la primera no se guarda en la db con el parser. no se que pedo
+- Faltan botones para cambiar el orden de los resultados de busqueda
 - Falta funcion para guardar todos los boletines anteriores
 - Falta funcion para guardar el boletin de hoy y revisar si las nuevas son de interes para los usuarios
 - Faltan notificaciones, poner una bandera en la gui, emails, fb chat(!?)
