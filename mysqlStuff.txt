@@ -97,6 +97,15 @@ BEGIN
 END //
 DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE `sp_delete_user`(
+    IN p_name VARCHAR(45)
+)
+BEGIN
+    delete from userinfo where user_name = p_name;
+END //
+DELIMITER ;
+
 
 DELIMITER //
 CREATE PROCEDURE `sp_validateLogin`(
@@ -107,6 +116,15 @@ BEGIN
 END //
 DELIMITER ;
 
+
+DELIMITER //
+CREATE PROCEDURE `sp_validateLogin`(
+IN p_username VARCHAR(45)
+)
+BEGIN
+    select * from userinfo where user_username = p_username;
+END //
+DELIMITER ;
 
 
 "SELECT distinct no_expediente FROM usercases WHERE user_name = '" + str(name) + "' ORDER BY no_expediente;" 

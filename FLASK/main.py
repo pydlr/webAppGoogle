@@ -119,7 +119,7 @@ def addCase():
                 cursor  = conn.cursor()
                 cursor.callproc('sp_insert_usercase', (case, user, autoridad ) )
                 data    = cursor.fetchall()
-                print data
+                print data[0][0]
                 print len(data)
                 
                 if len(data) == 0:
@@ -169,6 +169,7 @@ def removeCase():
 @app.route('/userHome/<path:path>/',methods=['GET','POST'])
 def userHome(path):
     try:
+
         if str(session.get('user')) == str(path):
             name = str(session.get('user'))
             conn    = connect_to_cloudsql()
@@ -238,50 +239,15 @@ def validateLogin():
         conn.close()
         # return render_template('loginerror.html',error = 'Unauthorized Access')
 
-# DELETE?
-@app.route('/getProfile')
-def getProfile():
-    try:
-        print "1"
-        if session.get('user'):
-            print "2"
-            _user = session.get('user')
-
-            con = mysql.connect()
-            cursor = con.cursor()
-            cursor.callproc('sp_GetWishByUser',(_user,))
-            wishes = cursor.fetchall()
-            print "3"
-            wishes_dict = []
-            for wish in wishes:
-                wish_dict = {
-                        'Id': wish[0],
-                        'Title': wish[1],
-                        'Description': wish[2],
-                        'Date': wish[4]}
-                wishes_dict.append(wish_dict)
-
-            return json.dumps(wishes_dict)
-        else:
-            print "4"
-            return render_template('demo_error.html', error = 'Unauthorized Access')
-    except Exception as e:
-        print "5"
-        return render_template('demo_error.html', error = str(e))
-
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
 
     try:
         if request.form['fb']:
             _name       = request.form['fbName']
-            print _name
             if request.form['fbEmail']:
-                print "pp"
                 _email   = request.form['fbEmail']
-                print _email
             else: 
-                print "email"
                 _email = 'Undefined'
 
             _password   = "default"
@@ -306,12 +272,24 @@ def signUp():
             _hashed_password    = generate_password_hash(_password)
             cursor.callproc('sp_create_user',(_name,_email,_hashed_password))
             data                = cursor.fetchall()
+           
+            # if data[0][0]:
 
-            if len(data) is 0:
+            if (len(data) == 0):
                 conn.commit()   
                 session['user'] = _name
+                print "Saved new user"
                 return _name
+
+            elif ((data[0][0] == 'Email Exists !!') or
+                (data[0][0] == 'Name Exists !!' )):   
+                session['user'] = _name
+                print "User already exists"
+                return _name
+
+
             else:
+                print 'error here'
                 return json.dumps({'error':str(data[0])})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})

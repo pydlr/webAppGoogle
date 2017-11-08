@@ -75,8 +75,18 @@
                   <input class="span2"    type="text"       name='inputEmail'     placeholder="Email" required>
                   <input class="span2"    type="password"   name='inputPassword' placeholder="Password" required >
                   <button href="#signUp"  type="submit"     class="btn" >Sign in</button>
+                  <span style='color: white'> Or </span>
                 </form>
               </li>
+
+              <!-- =================================== FB NAVBAR BUTTON ================================= -->
+              <li>
+                  <div style='margin-top: 5px; margin-left: 5px;'>
+                  <div class="fb-login-button" data-width="20" data-max-rows="1" data-size="medium" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"
+                  scope="public_profile, email" onlogin="checkLogin('login');" ></div>
+                  </div>
+              </li>
+              <!-- =================================== FB NAVBAR BUTTON ================================= -->
 
               
                             
@@ -128,9 +138,14 @@
                 </p>
             </div>
 
+            <label  for="txtTitle" style="color:white;">Or</label>  
+
             <!-- ============================  FACEBOOK LOGIN BUTTON ============================= -->
-            <div class="fb-login-button" data-width="50" data-max-rows="1" data-size="large" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false" 
-            scope="public_profile, email" onlogin="checkLoginState();"></div>
+            <!-- <div style='margin-top:10px'> -->
+            <div class="fb-login-button" data-width="20" data-max-rows="1" data-size="medium" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"
+            scope="public_profile, email" onlogin="checkLogin('signup');" width='20px' ></div>
+          <!-- </div> -->
+          
             <!-- ============================  FACEBOOK LOGIN BUTTON ============================= -->
 
 
@@ -165,54 +180,56 @@
     <script src="../static/js/signUp.js"></script>
 
     <script>
-         function checkLoginState()
+         function checkLogin(signOrLog)
          {
-          console.log('simon')
           FB.getLoginStatus(function(response) 
-                            {
-                              console.log(response.status);
-                              testAPI();
-                              
-
-                              // statusChangeCallback(response);
-                            });
+                        {
+                          console.log(response.status);
+                          signInFB(response.status,signOrLog);
+                        });
          }
 
-         function testAPI() 
+          function signInFB(newstatus, signOrLog) 
          {
-            console.log('Welcome!  Fetching your information.... ');
             FB.api('/me', function(response) 
             {
               console.log('Successful login for: ' + response.name);
               var name = response.name;
               var mail = response.email;
-              if (typeof mail == 'undefined'){
+              if (typeof mail == 'undefined')
+              {
                 mail = 'default';
               }
-              console.log(mail);
-              signUp(name,mail);
+              if (signOrLog == 'login')
+              {
+                SignIn(name,mail, '/signUp');
+              }
+              else
+              {
+                SignIn(name, mail, '/signUp');
+              }
             });
           }
 
-          function signUp()
+          function SignIn()
           {
                   $.ajax(
                   {
-                      url: '/signUp',
+                      url: arguments[2],
                       data: { fb : '1',
                               fbName : arguments[0],
                               fbEmail: arguments[1]
                             },
                       type: 'POST',
-                      success: function(response) {
+                      success: function(response) 
+                      {
                           var str1 = "/userHome/";
                           var str2 = response;
                           var path = str1.concat(str2);
-                          console.log(path);
-
                           window.location = path;
                       },
-                      error: function(error) {
+                      error: function(error) 
+                      {
                           console.log(" Debug error in js");
                           // window.location = /error;
                       }
