@@ -22,7 +22,7 @@ Procedimientos:
 
 BUGS y TODOs:
 - Error al intentar agregar un caso que ya esta agregado - FIXED
-- Error: cuando un caso tiene varias resoluciones, la primera no se guarda en la db con el parser. no se que pedo
+- Error: cuando un caso tiene varias resoluciones, hay una qu se no se guarda. no se que pedo
 - Faltan botones para cambiar el orden de los resultados de busqueda
 - Falta funcion para guardar todos los boletines anteriores
 - Falta funcion para guardar el boletin de hoy y revisar si las nuevas son de interes para los usuarios
