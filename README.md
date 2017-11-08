@@ -22,7 +22,8 @@ Procedimientos:
 
 BUGS y TODOs:
 - Error al intentar agregar un caso que ya esta agregado - FIXED
-- Error: cuando un caso tiene varias resoluciones, hay una qu se no se guarda. no se que pedo
+- Cuando se hace fb login, la ventana de aprobacion aparece y desaparece sin esperar confirmacion
+- Error: cuando un caso tiene varias resoluciones, hay una qu se no se guarda, o no se puede encontrar. no se que pedo
 - Faltan botones para cambiar el orden de los resultados de busqueda
 - Falta funcion para guardar todos los boletines anteriores
 - Falta funcion para guardar el boletin de hoy y revisar si las nuevas son de interes para los usuarios
