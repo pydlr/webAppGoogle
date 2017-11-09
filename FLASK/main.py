@@ -100,16 +100,20 @@ def parseFromLink():
     cursor              = conn.cursor()
     cursor.execute(query)
     data = cursor.fetchall()
-
     cursor.close()
     conn.close()
 
+    # No_Expediente - Username - nuevaResolucion
     datos = []
     for rows in data:
         datos.append ( [ rows[1], rows[2],  0])
 
     parser = parse_class.Parser()
     newdata = parser.parse(datos, True, True, link)
+
+
+    
+    
 
     return redirect('/admin')
 
