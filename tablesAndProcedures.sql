@@ -133,6 +133,42 @@ BEGIN
 END //
 DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE `sp_insert_resolucion`(
+    IN p_autoridad TINYTEXT,
+    IN p_ramo_secretaria TINYTEXT,
+    IN p_sala_secretaria TINYTEXT,
+    IN p_tipo VARCHAR(48),
+    IN p_no_resolucion VARCHAR(8),
+    IN p_no_expediente VARCHAR(16),
+    IN p_contenido TEXT
+)
+BEGIN
+     
+    insert into resoluciones
+    (
+        autoridad, 
+        ramo_secretaria,
+        sala_secretaria,
+        tipo,
+        no_resolucion,
+        no_expediente, 
+        contenido
+
+    )
+    values
+    (
+        p_autoridad, 
+        p_ramo_secretaria,
+        p_sala_secretaria,
+        p_tipo,
+        p_no_resolucion,
+        p_no_expediente, 
+        p_contenido
+    );
+    END//
+    DELIMITER ;
+
 ################################################   PROCEDURES  ##############################
 
 ################################################   COMMANDS  ##############################

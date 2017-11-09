@@ -59,12 +59,12 @@
               
               <li>
                  <form   class="navbar-form pull-right" action="/showCase" method="post">
-                  <input class="span2"    type="text"       name='inputCase'     placeholder="Case #" required>
-                  <button href="#signUp"  type="submit"     class="btn" >Search Case</button>
+                  <input class="span2"    type="text"       name='inputCase'     placeholder="Numero o Ciudad" required>
+                  <button href="#signUp"  type="submit"     class="btn" >Buscar Caso</button>
                 </form>
               </li> 
 
-              <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+              <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
               
               
             </ul>
@@ -157,20 +157,15 @@
          function removeMSQL(link, expediente, autoridad)
          {
           // Obtain the row where the current <a> is and remove it
-          var row = link.parentNode.parentNode;
-          var table = row.parentNode; 
-          table.removeChild(row); 
-          // tempAlert("close",5000);
-         // POST request to this url in flask, delete this case from DB
-          $.post( 
-            "/removeCase", 
-            {  case : expediente,
-                auto : autoridad} ) ;
-
-
-          $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
-    $("#success-alert").slideUp(500);
-});
+            var row = link.parentNode.parentNode;
+            var table = row.parentNode; 
+            table.removeChild(row); 
+            // tempAlert("close",5000);
+           // POST request to this url in flask, delete this case from DB
+            $.post( 
+              "/removeCase", 
+              {  case : expediente,
+                  auto : autoridad} ) ;
 
 
          }

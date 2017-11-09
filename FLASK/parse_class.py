@@ -91,10 +91,15 @@ class MySQLConnection:
 class Parser():
 
 	# ==========================  MAIN ================================
-	def __init__(self, writeToDatabase = False, localfile = False, link = 'http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm'):
+	def __init__(self	):
 		
+		return None
+	# ==========================    MAIN    ===============================
 
+	def parse(self, datos, writeToDatabase = False, localfile = False, link = 'http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm'):
+	
 		# link = 'http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm'
+		# http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171106.htm
 		print 'Scraping: ' + link
 
 		self.database = writeToDatabase
@@ -107,25 +112,23 @@ class Parser():
 			html = urllib2.urlopen(link)
 			soup = BeautifulSoup(html, 'html.parser')
 		else:
-			soup = BeautifulSoup(open("boletin.html"), 'html.parser')
+			soup = BeautifulSoup(open(link), 'html.parser')
 
 		firstElement = soup.find(text = re.compile(r'H. TRIBUNAL SUPERIOR'))
 
 		AUTORIDAD = firstElement
 		i = 0
 		DB_ENTRIES[i] = AUTORIDAD.encode('utf-8').replace('\n', ' ').replace('\r', '')
-		print 'Autoridad: ' + str(DB_ENTRIES[i])
 
 		next_element = firstElement.find_next('span')
 
-		self.scanHTML(next_element , i+1)
-	# ==========================    MAIN    ===============================
+		newdata = self.scanHTML(next_element , i+1, datos)
 
-
+		return newdata
 
 	# ===========================   PARSER  =============================
 	# i = El numero de columna en la base de datos
-	def scanHTML(self, next_element, i ):
+	def scanHTML(self, next_element, i, datos ):
 
 		finished = False
 		alreadyIncremented = False
@@ -200,10 +203,11 @@ class Parser():
 							nextd = nextd.find_next('td')
 							DB_ENTRIES[i+3] = nextd.text.strip()
 
-							print str(i) + ': DB: ' + str(DB_ENTRIES)
+							#print str(i) + ': DB: ' + str(DB_ENTRIES)
 							
 							# MYSQL QUERY!!!!!!!!
 							if self.database:
+
 								cursor.callproc('sp_insert_resolucion',(
 									DB_ENTRIES[0].encode('utf-8').replace('\n', ' ').replace('\r', ''),
 									DB_ENTRIES[1].encode('utf-8').replace('\n', ' ').replace('\r', ''),
@@ -211,11 +215,17 @@ class Parser():
 									DB_ENTRIES[3].encode('utf-8').replace('\n', ' ').replace('\r', ''),
 									DB_ENTRIES[4].encode('utf-8').replace('\n', ' ').replace('\r', ''),
 									DB_ENTRIES[5].encode('utf-8').replace('\n', ' ').replace('\r', ''),
-									DB_ENTRIES[6].encode('utf-8').replace('\n', ' ').replace('\r', '')))
+									DB_ENTRIES[6].encode('utf-8').replace('\n', ' ').replace('\r', ''),))
 
 								data = cursor.fetchall()
 								if len(data) is 0:
 									conn.commit()
+
+								# See if new data is relevant to users and count it
+								for rows in datos:
+									if rows[0] == str(DB_ENTRIES[5]):
+										# print "ENTRIES" + str(DB_ENTRIES[5])
+										rows[2] += 1
 
 							next_element = nextd
 
@@ -234,18 +244,22 @@ class Parser():
 				
 				i = 0
 				next_element = next_element.find_next('span')
+
+		return datos
 	# ===========================   PARSER  =============================
 
 
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
+	# store to the databes true or false
 	parser.add_argument("-db",
 						"--database", 
 						help="save to database",
 	                    action="store_true",
 	                    default = False)
 
+	# use a localfile instead of a link
 	parser.add_argument("-l",
 						"--localfile", 
 						help="save to database",
@@ -254,5 +268,5 @@ if __name__ == "__main__":
 
 	args = parser.parse_args()
 
-	boletinParse = Parser(args.database, args.localfile)
+	boletinParse = Parser.parse(args.database, args.localfile)
 	

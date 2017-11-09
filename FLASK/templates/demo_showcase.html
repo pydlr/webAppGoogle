@@ -30,19 +30,7 @@
                     <link rel="apple-touch-icon-precomposed" href="../static/assets/ico/apple-touch-icon-57-precomposed.png">
                                    <link rel="shortcut icon" href="../static/assets/ico/favicon.png">
   
-    <script src="../static/assets/js/jquery.js"></script>
-
-    <script>
-         function insertMSQL()
-         {
-          var no_case = String(arguments[0]);
-          var autoridad = String(arguments[1]);
-          $.post( 
-            "/addCase", 
-            {  case : no_case,
-                auto : autoridad} ) ;
-         }
-    </script>
+    
 
   </head>
 
@@ -70,7 +58,7 @@
               <li>
                  <form   class="navbar-form pull-right" action="/showCase" method="post">
                   <input class="span2"    type="text"       name='inputCase'     placeholder="Case #" required>
-                  <button href="#signUp"  type="submit"     class="btn" >Search Case</button>
+                  <button  type="submit"     class="btn" >Search Case</button>
                 </form>
               </li> 
 
@@ -113,6 +101,7 @@
               <tr >
                   <th scope="col">EXPEDIENTE</th>
                   <th scope="col">AUTORIDAD</th>
+                  <th scope="col">TIPO</th>
                   <th scope="col">CONTENIDO</th>
                   <th scope="col"></th>
               </tr>
@@ -123,8 +112,8 @@
                   {% for d in row %}
                       <td >{{ d.decode('utf-8') }}</td>
                   {% endfor %}
-                      <td><a class="btn btn-primary btn-large" type="button" id="addID"  value = "Add"  name={{row[0]}} 
-                         onclick="insertMSQL('{{row[0]}}','{{row[1]}}')"/>Add</td>
+                      <td><a class="btn btn-primary btn-large" type="button" id="addID" 
+                         onclick="insertMSQL(this)"/>Add</td>
                   </tr>
               {% endfor %}
           </tbody>
@@ -157,8 +146,34 @@
     <script src="../static/assets/js/bootstrap-collapse.js"></script>
     <script src="../static/assets/js/bootstrap-carousel.js"></script>
     <script src="../static/assets/js/bootstrap-typeahead.js"></script>
-
     
+    <script>
+         function insertMSQL(link)
+         {
+          console.log(link);
+          var content     = link.parentNode.parentNode.children[1].innerHTML;
+          var expediente  = link.parentNode.parentNode.children[0].innerHTML;
+
+          console.log(content);
+          console.log(expediente);
+
+          // var no_case = String(arguments[1]);
+          // var autoridad = String(arguments[2]);
+          // console.log(autoridad);
+
+         //  $.post( 
+         //    "/addCase", 
+         //    {  case : no_case,
+         //        auto : autoridad} ) ;
+         // }
+         $.post( 
+            "/addCase", 
+            {  case : expediente,
+                auto : content} ) ;
+         }
+
+
+    </script>
     
 
   </body>

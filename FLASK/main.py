@@ -1,5 +1,8 @@
+from __future__ import unicode_literals
+
 from    flask       import  Flask, render_template, json, request, redirect, session
 from    werkzeug    import  generate_password_hash, check_password_hash
+
 import  MySQLdb     as      mysql 
 import  os
 import  uuid
@@ -23,7 +26,25 @@ CLOUDSQL_CONNECTION_NAME    = os.environ.get('CLOUDSQL_CONNECTION_NAME')
 CLOUDSQL_USER               = os.environ.get('CLOUDSQL_USER')
 CLOUDSQL_PASSWORD           = os.environ.get('CLOUDSQL_PASSWORD')
 
-def connect_to_cloudsql():    # When deployed to App Engine, the 'SERVER_SOFTWARE' environment variable
+# SignUp
+@app.route('/admin')
+def admin():
+
+    user        = str(session.get('user'))
+
+    if (user == 'Resonant Digit' or 
+        user == 'Roberto'):
+        print 'Logged as admin'
+        return render_template('demo_admin.html')
+
+    else:
+        return render_template('demo_error.html', error='Unauthorized access')
+
+# MySQL connection to either Google App Engine's SQL instance or default to the local database
+# The local database has to have the local mysql server running
+def connect_to_cloudsql():    
+    # Google App Engine:
+    # When deployed to App Engine, the 'SERVER_SOFTWARE' environment variable
     # will be set to 'Google App Engine/version'.
     if os.getenv('SERVER_SOFTWARE','').startswith('Google App Engine/'):
         # Connect using the unix socket located at
@@ -44,84 +65,156 @@ def connect_to_cloudsql():    # When deployed to App Engine, the 'SERVER_SOFTWAR
     #   $ cloud_sql_proxy -instances=abogangster-182717:europe-west3:boletin=tcp:3306
     #
 
+    # Local MySQL:
     else:
-        print "Using local mysql:"
         conn = mysql.connect(
             host    = '127.0.0.1',
             user    = 'root',
             passwd  = 'NO',
             db      = dbname)
         print conn
-
     return conn
 
+# Call parser, false to not save to database
+# use parseToday
+# TODO: add options for database name etc.
 @app.route('/parseHtml')
 def parseHml():
-    # Call parser, false to not save to database
-    # TODO: add options for database name etc.
     parser = parse_class.Parser(False) 
     return render_template('demo_signup.html')
 
-@app.route('/parseToday', methods=['GET','POST'])
-def parseToday():
-    todayslink = str(request.args.get('link'))
-    parser = parse_class.Parser(True, False, todayslink)
-    return 'Finished'
+# Parse html from link in the url, or local file i.e.
+# /parseToday?link=http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm
+# http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171106.htm
+# boletin.html
+@app.route('/parseFromLink', methods=['GET','POST'])
+def parseFromLink():
 
+    # The name of file or URL come from the gui
+    link = str(request.form['inputLink'])
+
+    # MySQL connection & query
+    query = "SELECT * FROM usercases;"
+    print query
+    conn                = connect_to_cloudsql()
+    cursor              = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    datos = []
+    for rows in data:
+        datos.append ( [ rows[1], rows[2],  0])
+
+    parser = parse_class.Parser()
+    newdata = parser.parse(datos, True, True, link)
+
+    return redirect('/admin')
+
+
+@app.route('/sqlCommand', methods=['GET','POST'])
+def sqlCommand():
+    query = str(request.form['inputQuery'])
+    print query
+    conn                = connect_to_cloudsql()
+    cursor              = conn.cursor()
+
+    cursor.execute(query)
+
+    data = cursor.fetchall()
+
+    if(conn.commit()): 
+        print 'commit() '
+    cursor.close()
+    conn.close()
+
+    datos = []
+
+    i = 0
+    for rows in data:
+        datos.append ( [ data[i][1], data[i][2],  0])
+        i += 1
+
+
+    return redirect('/admin')
+
+
+
+# MAIN MAIN MIAN MAIN MAIN  
 @app.route('/')
 def main():
-    # URL arguments:
-    # print str(request.args.get('expediente'))
     if session.get('user'):
         url = '/userHome/' + str(session.get('user'))
         return redirect(url)
     else:
         return render_template('index.html')
 
-# This is a dummy function to test cathing any path and using it to render content
-# @app.route('/public/<path:path>/')
-@app.route('/public')
-def bla():
-    return render_template('index_carousel.html', first_slider="path")
-
+# SignIn
 @app.route('/showSignIn')
 def showSignin():
     return render_template('signin.html')
 
+# SignUp
 @app.route('/showSignUp')
 def showSignUp():
     return render_template('demo_signup.html')
 
+# Search Table 
 @app.route('/showCase', methods=['POST'])
 def showCase():
+    try:
+        # MySQL call 
+        conn                = connect_to_cloudsql()
+        cursor              = conn.cursor()
 
-    conn                = connect_to_cloudsql()
-    cursor              = conn.cursor()
-    expediente          = request.form["inputCase"]
-    query = "SELECT no_expediente, autoridad, contenido FROM `resoluciones` WHERE (`autoridad` LIKE '%" + str(expediente) + "%') OR (no_expediente LIKE '%" + str(expediente) + "%');"
-
-    cursor.execute(query)
-    data = cursor.fetchall()
-    conn.commit() 
-    cursor.close() 
-    conn.close()
+        # Encode otherwise no one undestands what you wrote
+        # expediente          = str(request.form["inputCase"].encode('utf-8').replace('\n', ' ').replace('\r', ''))
+        # expediente = str(request.form['inputCase'])
+        # expediente = '1892/2015'
+        # expediente = unicode(expediente, 'utf-8')
+        # expediente = expediente.encode('utf-8')
+        expediente = request.form['inputCase']
+        print 'expediente ' + str(expediente)
+        if expediente == 'all':
+            print 'here'
+            query = "SELECT no_expediente, autoridad, contenido from `resoluciones`"
+        else:
+            query = "SELECT no_expediente, autoridad, tipo, contenido FROM resoluciones WHERE (`autoridad` LIKE '%" + str(expediente) + "%') OR (no_expediente LIKE '%" + str(expediente) + "%') OR (tipo LIKE '%" + str(expediente) + "%');"
+        print query
+        cursor.execute(query)
+        print "after query"
+        data = cursor.fetchall()
+        print 'len: ' + str(len(data))
+        # print data
+        # print data[0][0]
+        conn.commit() 
+        cursor.close() 
+        conn.close()
+    except Exception as error:
+        print "Error in query: " + str(error)
 
     return render_template('demo_showcase.html', data = data, caso = expediente)
 
 @app.route('/addCase', methods=['POST'])
 def addCase():
-        case        = request.form["case"]
-        autoridad   = request.form["auto"]
+        case        = request.form["case"].encode('utf-8',"replace" ).replace('\n', ' ').replace('\r', '')
+        autoridad   = request.form["auto"].encode('utf-8',"replace" ).replace('\n', ' ').replace('\r', '')
+
+        print case
+        print autoridad
+
         user        = str(session.get('user'))
         if user:
             try:
                 conn    = connect_to_cloudsql()
                 cursor  = conn.cursor()
+                print 'before proc'
                 cursor.callproc('sp_insert_usercase', (case, user, autoridad ) )
+                print 'after proc'
                 data    = cursor.fetchall()
-                print data[0][0]
-                print len(data)
-                
+                print data
                 if len(data) == 0:
                     conn.commit()
                     cursor.close()
@@ -134,13 +227,13 @@ def addCase():
                     print 'Could not add case'
                     return 'Could not add case'
             except Exception as error:
+                print " Add case error: " + str(error)
                 return error
 
         return "LSD"
 
 @app.route('/removeCase', methods=['GET','POST'])
 def removeCase():
-        print 'Remove...'
         case        = request.form["case"]
         autoridad   = request.form["auto"]
         user        = str(session.get('user'))
@@ -215,7 +308,7 @@ def validateLogin():
         _username = request.form['inputEmail']
         _password = request.form['inputPassword']
 
-        # connect to mysql
+        # Connect to mysql
         conn    = connect_to_cloudsql()
         cursor  = conn.cursor()
         cursor.callproc('sp_validateLogin',(_username,))
@@ -241,55 +334,50 @@ def validateLogin():
 
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
+    fb =   request.args.get('fb')
+    
+    # Login with Facebook
+    if fb == 1:
+        _name       = request.form['fbName']
+        if request.form['fbEmail']:
+            _email   = request.form['fbEmail']
+        else: 
+            _email = 'Undefined'
 
-    try:
-        if request.form['fb']:
-            _name       = request.form['fbName']
-            if request.form['fbEmail']:
-                _email   = request.form['fbEmail']
-            else: 
-                _email = 'Undefined'
+        _password   = "default"
 
-            _password   = "default"
-
-            print _name
-            print _email
-            print _password
-            
-        else:
-            print "Using own Signup"
-            _name       = request.form['inputName']
-            _email      = request.form['inputEmailSignUp']
-            _password   = request.form['inputPasswordSignUp']
+    # Request from our interface
+    else: 
+        _name       = request.form['inputName']
+        _email      = request.form['inputEmailSignUp']
+        _password   = request.form['inputPasswordSignUp']
         
-        # validate the received values
+    try:
+
+        # Validate the received values
         if _name and _email and _password:
-            
-            # All Good, let's call MySQL
-            # conn                = mysql.connect(host=hostname,user=username,passwd=passwd,db=dbname)
+
+            # MySQL process
             conn                = connect_to_cloudsql()
             cursor              = conn.cursor()
             _hashed_password    = generate_password_hash(_password)
             cursor.callproc('sp_create_user',(_name,_email,_hashed_password))
             data                = cursor.fetchall()
-           
-            # if data[0][0]:
 
+            # Creation succesful! 
             if (len(data) == 0):
                 conn.commit()   
                 session['user'] = _name
-                print "Saved new user"
                 return _name
 
-            elif ((data[0][0] == 'Email Exists !!') or
-                (data[0][0] == 'Name Exists !!' )):   
+            # User is already in database
+            elif (data[0][0] == 'User Exists!'):   
                 session['user'] = _name
-                print "User already exists"
                 return _name
 
-
+            # Everything went wrong, cry!
             else:
-                print 'error here'
+                print 'DB error'
                 return json.dumps({'error':str(data[0])})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
