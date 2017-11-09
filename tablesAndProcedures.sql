@@ -189,9 +189,13 @@ SELECT * FROM `resoluciones` WHERE `autoridad` LIKE '%{$MEXICALI}%'
 
 # restart numeration
 restart key autoincrement mysql
+
+INSERT INTO table_name (column1, column2, column3, ...)
+VALUES (value1, value2, value3, ...);
+
+update userinfo set notificaciones = '1' where user_name = 'test';
+
 ################################################   COMMANDS  ##############################
-
-
 
 ################################################   CREATE TABLES  ##############################
 CREATE TABLE `demo_users`.`userinfo` (
@@ -199,6 +203,7 @@ CREATE TABLE `demo_users`.`userinfo` (
   `user_name` VARCHAR(45) NULL,
   `user_username` VARCHAR(45) NULL,
   `user_password` VARCHAR(127) NULL,
+  `notificaciones` VARCHAR(8) NULL,
   PRIMARY KEY (`user_id`));
 
 

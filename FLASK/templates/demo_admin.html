@@ -77,29 +77,45 @@
             <!-- Form Name -->
             <legend style="color:white;">Admin.</legend>
 
-            <!-- Name input-->
+            <!-- Parse Link input-->
             <form action="/parseFromLink" method="post">
               <label  for="txtTitle" style="color:white;">Parse link</label>  
               <div>
                 <div>
-                  <input name="inputLink" type="text" placeholder="" class="form-control input-md"> 
-                  <button  class = "btn btn-primary btn-medium" style='width:100px;'>Parse!</button>
+                  <input    name  ="inputLink"
+                            type  ="text" 
+                            placeholder="link o .html" 
+                            class ="form-control input-md"> 
+                  <button   class = "btn btn-primary btn-medium" 
+                            style = 'width:100px;'>Parse!
+                  </button>
+                  <checkbox class="checkbox" name  ='check1'>
+                    <label style = 'color:white;'><input  
+                                  type  ="checkbox" 
+                                  value =""
+                                  >From file
+                    </label>
+                  </checkbox>
+
                 </div>
               </div>
             </form>
 
-            <!-- Email input-->
+            <!-- SQL Query input-->
             <form action="/sqlCommand" method="post">
               <label  for="txtTitle" style="color:white;">MysQL Query</label> 
               <div>
                 <div> 
-                  <input name="inputQuery" type="text" placeholder="" class="form-control input-md"> 
+                  <input  name="inputQuery" 
+                          type="text" 
+                          placeholder="" 
+                          class="form-control input-md"> 
                   <button class = "btn btn-primary btn-medium"style='width:100px;' >Execute!</button>
                 </div>
               </div>
             </form>
 
-            <!-- Password input-->
+            <!-- Otro input-->
             <div class="form-group">
               <label  for="txtTitle" style="color:white;">Kitas Dalykas</label>  
               <div>

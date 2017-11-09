@@ -8,6 +8,10 @@ import  os
 import  uuid
 import  parse_class 
 
+# TODO: Hacer una clase y  objeto User ?
+# TODO: Abstraer todas las llamadas a mysql, en una sola funcion
+
+
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/Uploads'
 app.secret_key = 'why would I tell you my secret key?'
@@ -57,6 +61,8 @@ def connect_to_cloudsql():
             user        = CLOUDSQL_USER,
             passwd      = CLOUDSQL_PASSWORD,
             db          = dbname)
+        print 'Using Google cloud sql'
+        print conn 
 
     # If the unix socket is unavailable, then try to connect using TCP. This 
     # will work if you are running a local MySQL server or using the Clud SQL
@@ -72,6 +78,8 @@ def connect_to_cloudsql():
             user    = 'root',
             passwd  = 'NO',
             db      = dbname)
+
+        print "Using localhost"
         print conn
     return conn
 
@@ -109,14 +117,42 @@ def parseFromLink():
         datos.append ( [ rows[1], rows[2],  0])
 
     parser = parse_class.Parser()
-    newdata = parser.parse(datos, True, True, link)
+    #newdata = parser.parse(datos, writeToDatabase = True, localfile = False, link) 
+    newdata = parser.parse(datos, True, False, link) 
+    print newdata
 
+    ##### AGGREGATE NEWS INTO USERS PROFILE TO NOTIFY THEM 
+    query = "SELECT user_name FROM userinfo;"
+    print query
+    conn                = connect_to_cloudsql()
+    cursor              = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    
+    print ' DATA: ' + str(data)
 
-    
-    
+    notificaciones = 0
+    for user in data:
+        for row in newdata:
+            if row[1] == user[0]:
+                notificaciones += row[2]
+        print notificaciones 
+
+        query = "UPDATE userinfo SET notificaciones = '" + str(notificaciones) + "' where user_name = '" + str(user[0]) + "';"
+        print query
+        cursor.execute(query)
+        try:
+            conn.commit()
+        except Exception as error:
+            print error
+        print 'FETCH: ' + str(cursor.fetchall())
+        notificaciones = 0 
+
+    cursor.close()
+    conn.close()
+
 
     return redirect('/admin')
-
 
 @app.route('/sqlCommand', methods=['GET','POST'])
 def sqlCommand():
@@ -128,25 +164,21 @@ def sqlCommand():
     cursor.execute(query)
 
     data = cursor.fetchall()
+    print data
 
     if(conn.commit()): 
-        print 'commit() '
+        print 'commit()'
     cursor.close()
     conn.close()
 
     datos = []
 
-    i = 0
     for rows in data:
-        datos.append ( [ data[i][1], data[i][2],  0])
-        i += 1
-
+        datos.append ( [ rows[1], rows[2],  0])
 
     return redirect('/admin')
 
-
-
-# MAIN MAIN MIAN MAIN MAIN  
+# ################################################# MAIN  
 @app.route('/')
 def main():
     if session.get('user'):
@@ -183,7 +215,7 @@ def showCase():
         print 'expediente ' + str(expediente)
         if expediente == 'all':
             print 'here'
-            query = "SELECT no_expediente, autoridad, contenido from `resoluciones`"
+            query = "SELECT no_expediente, autoridad, tipo, contenido from `resoluciones`"
         else:
             query = "SELECT no_expediente, autoridad, tipo, contenido FROM resoluciones WHERE (`autoridad` LIKE '%" + str(expediente) + "%') OR (no_expediente LIKE '%" + str(expediente) + "%') OR (tipo LIKE '%" + str(expediente) + "%');"
         print query
@@ -268,9 +300,9 @@ def userHome(path):
     try:
 
         if str(session.get('user')) == str(path):
-            name = str(session.get('user'))
-            conn    = connect_to_cloudsql()
-            cursor  = conn.cursor()
+            name        = str(session.get('user'))
+            conn        = connect_to_cloudsql()
+            cursor      = conn.cursor()
             # cursor.callproc('sp_validateLogin',(_username,))
             mysql_userdata_query = "SELECT * FROM userinfo WHERE user_name = '" + str(path) + "';"
             cursor.execute(mysql_userdata_query)
@@ -279,22 +311,35 @@ def userHome(path):
             mysql_cases_query = "SELECT distinct no_expediente FROM usercases WHERE user_name = '" + str(name) + "' ORDER BY no_expediente;" 
 
             cursor.execute(mysql_cases_query)
-            casesdata    = cursor.fetchall()
+            casesdata   = cursor.fetchall()
 
-            big_query = "SELECT no_expediente, autoridad, contenido FROM resoluciones WHERE no_expediente IN ("
+            big_query   = "SELECT no_expediente, autoridad, tipo, contenido FROM resoluciones WHERE no_expediente IN ("
             for case in casesdata:
                 big_query = big_query + "'" + str(case[0]) + "', "
-            big_query = big_query + " '0000/0000');"
-
+            big_query   = big_query + " '0000/0000');"
+ 
             cursor.execute(big_query)
             big_query_data = cursor.fetchall()
+
+
+            # Clear new notifications
+            query = "UPDATE userinfo SET notificaciones = '0' WHERE user_name = '" + str(name) + "';"
+            cursor.execute(query)
+            try:
+                conn.commit()
+            except Exception as error:
+                print error
 
             cursor.close()
             conn.close()
 
+
+
+
             return render_template('demo_userhome.html', 
                 username=userdata[0][1],
-                data = big_query_data)
+                data = big_query_data,
+                notificaciones = str(userdata[0][4]) + ' Nuevas resoluciones')
         else:
             return render_template('demo_error.html',error = 'Unauthorized Access')
 

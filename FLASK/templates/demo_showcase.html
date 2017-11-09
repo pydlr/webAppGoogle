@@ -18,6 +18,10 @@
     </style>
     <link href="../static/assets/css/bootstrap-responsive.css" rel="stylesheet">
 
+    <link href="../static/css/bootstrap-toggle.min.css" rel="stylesheet">
+
+
+
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="../assets/js/html5shiv.js"></script>
@@ -112,8 +116,12 @@
                   {% for d in row %}
                       <td >{{ d.decode('utf-8') }}</td>
                   {% endfor %}
-                      <td><a class="btn btn-primary btn-large" type="button" id="addID" 
-                         onclick="insertMSQL(this)"/>Add</td>
+                      <td>
+                        <!-- <button class="btn btn-primary btn-large" type="button" id="addID" 
+                         onclick="insertMSQL(this)" name='simon'>Add -->
+                         <input id="toggle-event" type="checkbox" data-toggle="toggle" onchange='insertMSQL(this)' onreset="uponStart(this)">
+
+                       </td>
                   </tr>
               {% endfor %}
           </tbody>
@@ -146,35 +154,56 @@
     <script src="../static/assets/js/bootstrap-collapse.js"></script>
     <script src="../static/assets/js/bootstrap-carousel.js"></script>
     <script src="../static/assets/js/bootstrap-typeahead.js"></script>
+    <script src="../static/js/bootstrap-toggle.min.js"></script>
+
     
     <script>
-         function insertMSQL(link)
-         {
+        function uptonStart(link)
+        {
           console.log(link);
-          var content     = link.parentNode.parentNode.children[1].innerHTML;
-          var expediente  = link.parentNode.parentNode.children[0].innerHTML;
+        }
 
-          console.log(content);
-          console.log(expediente);
+        function insertMSQL(link)
+         {
+          console.log(link.checked)
 
-          // var no_case = String(arguments[1]);
-          // var autoridad = String(arguments[2]);
-          // console.log(autoridad);
+          var content     = link.parentNode.parentNode.parentNode.children[1].innerHTML;
+          var expediente  = link.parentNode.parentNode.parentNode.children[0].innerHTML;
 
-         //  $.post( 
-         //    "/addCase", 
-         //    {  case : no_case,
-         //        auto : autoridad} ) ;
-         // }
-         $.post( 
+          if (link.checked)
+          {
+            console.log('true')
+            
+
+            console.log(content);
+            console.log(expediente);
+
+            $.post( 
             "/addCase", 
             {  case : expediente,
                 auto : content} ) ;
-         }
+          }
+          else
+          {
+            console.log('false')  
+            $.post( 
+              "/removeCase", 
+              {  case : expediente,
+                  auto : content} ) ;
+          }
+
+        }
 
 
     </script>
-    
+
+    <script>
+  $(function() {
+    $('#toggle-event').change(function() {
+      $('#console-event').html('Toggle: ' + $(this).prop('checked'))
+    })
+  })
+</script>
 
   </body>
 </html>
