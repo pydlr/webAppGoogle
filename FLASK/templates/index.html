@@ -47,8 +47,6 @@
 
 
 
-
-
                  <!-- NAVBAR
 ================================================== -->
 
@@ -155,17 +153,22 @@
               }
               if (signOrLog == 'login')
               {
+                console.log(signOrLog);
                 SignIn(name,mail, '/signUp');
-              }
+                              }
               else
               {
+                console.log(signOrLog);
                 SignIn(name, mail, '/signUp');
               }
+
             });
+
           }
 
           function SignIn()
           {
+                  console.log('here')
                   $.ajax(
                   {
                       url: arguments[2],
@@ -175,7 +178,7 @@
                             },
                       type: 'POST',
                       success: function(response) 
-                      {
+                      { 
                           var str1 = "/userHome/";
                           var str2 = response;
                           var path = str1.concat(str2);

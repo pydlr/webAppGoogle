@@ -383,10 +383,13 @@ def validateLogin():
 
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
-    fb =   request.args.get('fb')
-    
+    print 'simon'
+    # fb =   request.args.get('fb')
+    fb = request.form['fb']
+    print fb
     # Login with Facebook
-    if fb == 1:
+    if fb == '1':
+        print 'facebook'
         _name       = request.form['fbName']
         if request.form['fbEmail']:
             _email   = request.form['fbEmail']
