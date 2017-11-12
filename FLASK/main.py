@@ -118,7 +118,7 @@ def parseFromLink():
 
     parser = parse_class.Parser()
     #newdata = parser.parse(datos, writeToDatabase = True, localfile = False, link) 
-    newdata = parser.parse(datos, True, False, link) 
+    newdata = parser.parse(datos, True, True, link) 
     print newdata
 
     ##### AGGREGATE NEWS INTO USERS PROFILE TO NOTIFY THEM 
