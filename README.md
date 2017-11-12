@@ -41,4 +41,3 @@ IDEAS:
 - Guardar fecha del ultimo login, para despues limpiar cuentas muertas
 - Idiomas?
 - Notificacion por medio de fb chat
-
