@@ -116,13 +116,20 @@
                   {% for d in row %}
                       <td >{{ d.decode('utf-8') }}</td>
                   {% endfor %}
+                  <td><a class    = "btn btn-primary btn-large" 
+                              type    = "button" 
+                              id      = "addID"  
+                              value   = "Add"  
+                              name    = {{row[0]}}  
+                              onclick = "detalle(this, '{{row[0]}}', '{{row[1]}}')"
+                         />Detalle...</td>
                       <td><a class    = "btn btn-primary btn-large" 
                               type    = "button" 
                               id      = "addID"  
                               value   = "Add"  
                               name    = {{row[0]}}  
                               onclick = "removeMSQL(this, '{{row[0]}}', '{{row[1]}}')"
-                         />Remove</td>
+                         />Quitar</td>
                   </tr>
               {% endfor %}
           </tbody>
@@ -156,6 +163,23 @@
     <script src="../../static/assets/js/bootstrap-typeahead.js"></script>
 
     <script>
+      function detalle(link, expediente, autoridad)
+         {
+          // Obtain the row where the current <a> is and remove it
+            var row = link.parentNode.parentNode;
+            var table = row.parentNode; 
+            // table.removeChild(row); 
+            // tempAlert("close",5000);
+           // POST request to this url in flask, delete this case from DB
+           var path = '/showDetail?expediente='
+           path = path.concat(String(expediente))
+           //  $.post( 
+           //    path ) ;
+           window.location = path; 
+
+
+         }
+
          function removeMSQL(link, expediente, autoridad)
          {
           // Obtain the row where the current <a> is and remove it

@@ -96,7 +96,7 @@ class Parser():
 		return None
 	# ==========================    MAIN    ===============================
 
-	def parse(self, datos, writeToDatabase = False, localfile = False, link = 'http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm'):
+	def parse(self, writeToDatabase = False, localfile = False, link = 'http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm', datos = None):
 	
 		# link = 'http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm'
 		# http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171106.htm
@@ -222,10 +222,11 @@ class Parser():
 									conn.commit()
 
 								# See if new data is relevant to users and count it
-								for rows in datos:
-									if rows[0] == str(DB_ENTRIES[5]):
-										# print "ENTRIES" + str(DB_ENTRIES[5])
-										rows[2] += 1
+								if datos:
+									for rows in datos:
+										if rows[0] == str(DB_ENTRIES[5]):
+											# print "ENTRIES" + str(DB_ENTRIES[5])
+											rows[2] += 1
 
 							next_element = nextd
 
@@ -245,7 +246,8 @@ class Parser():
 				i = 0
 				next_element = next_element.find_next('span')
 
-		return datos
+		if datos:
+			return datos
 	# ===========================   PARSER  =============================
 
 
