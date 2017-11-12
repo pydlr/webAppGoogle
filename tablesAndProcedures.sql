@@ -195,6 +195,9 @@ VALUES (value1, value2, value3, ...);
 
 update userinfo set notificaciones = '1' where user_name = 'test';
 
+# in the terminal for the size of databases
+du -h path_to_a_directory
+
 ################################################   COMMANDS  ##############################
 
 ################################################   CREATE TABLES  ##############################

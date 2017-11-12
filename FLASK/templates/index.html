@@ -78,7 +78,7 @@
               <li>
                   <div style='margin-top: 5px; margin-left: 5px;'>
                   <div class="fb-login-button" data-width="20" data-max-rows="1" data-size="medium" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"
-                  scope="public_profile, email" onlogin="checkLogin('login');" ></div>
+                  scope="public_profile, email" onlogin="checkLogin();" ></div>
                   </div>
               </li>
               <!-- =================================== FB NAVBAR BUTTON ================================= -->
@@ -151,16 +151,8 @@
               {
                 mail = 'default';
               }
-              if (signOrLog == 'login')
-              {
-                console.log(signOrLog);
-                SignIn(name,mail, '/signUp');
-                              }
-              else
-              {
-                console.log(signOrLog);
-                SignIn(name, mail, '/signUp');
-              }
+
+              SignIn(name,mail, '/signUp?fb=1');
 
             });
 
@@ -168,7 +160,6 @@
 
           function SignIn()
           {
-                  console.log('here')
                   $.ajax(
                   {
                       url: arguments[2],

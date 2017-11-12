@@ -5,7 +5,7 @@
     <title>Boletin BC [demo-v0.1]</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="demo_showcase">
+    <meta name="description" content="demo_detailscase">
     <meta name="author" content="">
 
     <!-- Le styles -->
@@ -107,7 +107,6 @@
                   <th scope="col">AUTORIDAD</th>
                   <th scope="col">TIPO</th>
                   <th scope="col">CONTENIDO</th>
-                  <th scope="col"></th>
               </tr>
           </thead>
           <tbody>
@@ -116,12 +115,6 @@
                   {% for d in row %}
                       <td >{{ d.decode('utf-8') }}</td>
                   {% endfor %}
-                      <td>
-                        <!-- <button class="btn btn-primary btn-large" type="button" id="addID" 
-                         onclick="insertMSQL(this)" name='simon'>Add -->
-                         <input id="toggle-event" type="checkbox" data-toggle="toggle" onchange='insertMSQL(this)' onreset="uponStart(this)">
-
-                       </td>
                   </tr>
               {% endfor %}
           </tbody>
@@ -131,20 +124,6 @@
       </div>
     </div>
     <!-- ====================================== TABLE ================================= -->
-
-<!-- =========================================== PAGINATOR  ============================ -->
-<nav aria-label="Page navigation example">
-  <ul class="pagination">
-    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-  </ul>
-</nav>
-<!-- =========================================== PAGINATOR  ============================ -->
-
-
 
     <footer style="margin-top:80px ; margin-left: 80px"">
         <h5 class="brand" >&copy; IO Patterns 2017</h5>
@@ -169,47 +148,6 @@
     <script src="../static/assets/js/bootstrap-carousel.js"></script>
     <script src="../static/assets/js/bootstrap-typeahead.js"></script>
     <script src="../static/js/bootstrap-toggle.min.js"></script>
-
-    
-    <script>
-        function uptonStart(link)
-        {
-          console.log(link);
-        }
-
-        function insertMSQL(link)
-         {
-          var content     = link.parentNode.parentNode.parentNode.children[1].innerHTML;
-          var expediente  = link.parentNode.parentNode.parentNode.children[0].innerHTML;
-
-          if (link.checked)
-          {
-
-            $.post( 
-            "/addCase", 
-            {  case : expediente,
-                auto : content} ) ;
-          }
-          else
-          {
-            $.post( 
-              "/removeCase", 
-              {  case : expediente,
-                  auto : content} ) ;
-          }
-
-        }
-
-
-    </script>
-
-    <script>
-  $(function() {
-    $('#toggle-event').change(function() {
-      $('#console-event').html('Toggle: ' + $(this).prop('checked'))
-    })
-  })
-</script>
 
   </body>
 </html>

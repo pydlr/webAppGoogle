@@ -198,54 +198,60 @@ def showSignUp():
     return render_template('demo_signup.html')
 
 # Search Table 
-@app.route('/showCase', methods=['POST'])
+@app.route('/showCase', methods=['GET','POST'])
 def showCase():
     try:
-        # MySQL call 
+        # MySQL call  - TODO: Abstract 
         conn                = connect_to_cloudsql()
         cursor              = conn.cursor()
-        
-        expediente = request.form['inputCase']
-        print 'expediente ' + str(expediente)
+        print 'aqui'
+        if request.method == 'POST':
+            expediente = str(request.form['inputCase'])
+            print 'expediente for: ' + expediente 
+            # print 'request'
+
+        # if request.args.get('inputCase'):
+        else:
+            expediente = str(request.args.get('inputCase'))
+            print 'expdiente args: ' + expediente
+        print 'exp'
         if expediente == 'all':
-            print 'here'
             query = "SELECT no_expediente, autoridad, tipo, contenido from `resoluciones`"
         else:
-            query = "SELECT no_expediente, autoridad, tipo, contenido FROM resoluciones WHERE (`autoridad` LIKE '%" + str(expediente) + "%') OR (no_expediente LIKE '%" + str(expediente) + "%') OR (tipo LIKE '%" + str(expediente) + "%');"
+            query = ("SELECT no_expediente, autoridad, tipo, contenido "
+            "FROM resoluciones " 
+            "WHERE (`autoridad` " 
+            "LIKE '%" + str(expediente) + "%') OR (no_expediente LIKE '%" + str(expediente) + "%') OR (tipo LIKE '%" + str(expediente) + "%');")
+            
         print query
         cursor.execute(query)
-        print "after query"
         data = cursor.fetchall()
-        print 'len: ' + str(len(data))
-        # print data
-        # print data[0][0]
         conn.commit() 
         cursor.close() 
         conn.close()
     except Exception as error:
         print "Error in query: " + str(error)
 
-    return render_template('demo_showcase.html', data = data, caso = expediente)
+    if request.method == 'POST':
+        return render_template('demo_showcase.html', data = data, caso = expediente)
+    else:
+        return render_template('demo_detailcase.html', data = data, caso = expediente)
 
 @app.route('/addCase', methods=['POST'])
 def addCase():
+        # The gui form might give strange characters 
         case        = request.form["case"].encode('utf-8',"replace" ).replace('\n', ' ').replace('\r', '')
         autoridad   = request.form["auto"].encode('utf-8',"replace" ).replace('\n', ' ').replace('\r', '')
-
-        print case
-        print autoridad
 
         user        = str(session.get('user'))
         if user:
             try:
                 conn    = connect_to_cloudsql()
                 cursor  = conn.cursor()
-                print 'before proc'
                 cursor.callproc('sp_insert_usercase', (case, user, autoridad ) )
-                print 'after proc'
                 data    = cursor.fetchall()
                 print data
-                if len(data) == 0:
+                if len(data) == 0: 
                     conn.commit()
                     cursor.close()
                     conn.close()
@@ -254,7 +260,6 @@ def addCase():
                 else:
                     cursor.close()
                     conn.close()
-                    print 'Could not add case'
                     return 'Could not add case'
             except Exception as error:
                 print " Add case error: " + str(error)
@@ -289,13 +294,6 @@ def removeCase():
 
         return "LSD"
 
-@app.route('/showDetail', methods=['GET','POST'])
-def showDetail():
-
-    expediente = str(request.args.get('expediente'))
-    print 'expediente: ' + expediente
-
-    return render_template('demo_error.html', error=expediente)
 
 @app.route('/userHome/<path:path>/',methods=['GET','POST'])
 def userHome(path):
@@ -384,13 +382,16 @@ def validateLogin():
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
     print 'simon'
-    # fb =   request.args.get('fb')
-    fb = request.form['fb']
+    # print request.form['fbName']
+    fb =   request.args.get('fb')
+    print request.method
+    # fb = request.form['fb']
     print fb
     # Login with Facebook
     if fb == '1':
         print 'facebook'
         _name       = request.form['fbName']
+        print  _name
         if request.form['fbEmail']:
             _email   = request.form['fbEmail']
         else: 
@@ -401,14 +402,14 @@ def signUp():
     # Request from our interface
     else: 
         _name       = request.form['inputName']
-        _email      = request.form['inputEmailSignUp']
+        _email      = request.form['inputEmailSignUp'] 
         _password   = request.form['inputPasswordSignUp']
         
     try:
 
         # Validate the received values
         if _name and _email and _password:
-
+            print 'name'
             # MySQL process
             conn                = connect_to_cloudsql()
             cursor              = conn.cursor()
