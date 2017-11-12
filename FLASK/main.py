@@ -117,8 +117,8 @@ def parseFromLink():
         datos.append ( [ rows[1], rows[2],  0])
 
     parser = parse_class.Parser()
-    #newdata = parser.parse(datos, writeToDatabase = True, localfile = False, link) 
-    newdata = parser.parse(datos, True, True, link) 
+    #newdata = parser.parse(writeToDatabase = True, localfile = False, link, datos = None) 
+    newdata = parser.parse(True, True, link, datos) 
     print newdata
 
     ##### AGGREGATE NEWS INTO USERS PROFILE TO NOTIFY THEM 
@@ -204,13 +204,7 @@ def showCase():
         # MySQL call 
         conn                = connect_to_cloudsql()
         cursor              = conn.cursor()
-
-        # Encode otherwise no one undestands what you wrote
-        # expediente          = str(request.form["inputCase"].encode('utf-8').replace('\n', ' ').replace('\r', ''))
-        # expediente = str(request.form['inputCase'])
-        # expediente = '1892/2015'
-        # expediente = unicode(expediente, 'utf-8')
-        # expediente = expediente.encode('utf-8')
+        
         expediente = request.form['inputCase']
         print 'expediente ' + str(expediente)
         if expediente == 'all':
@@ -295,6 +289,14 @@ def removeCase():
 
         return "LSD"
 
+@app.route('/showDetail', methods=['GET','POST'])
+def showDetail():
+
+    expediente = str(request.args.get('expediente'))
+    print 'expediente: ' + expediente
+
+    return render_template('demo_error.html', error=expediente)
+
 @app.route('/userHome/<path:path>/',methods=['GET','POST'])
 def userHome(path):
     try:
@@ -313,14 +315,15 @@ def userHome(path):
             cursor.execute(mysql_cases_query)
             casesdata   = cursor.fetchall()
 
-            big_query   = "SELECT no_expediente, autoridad, tipo, contenido FROM resoluciones WHERE no_expediente IN ("
+            # big_query   = "SELECT distinct no_expediente, autoridad, tipo, contenido FROM resoluciones WHERE no_expediente IN ("
+            big_query   = "SELECT distinct no_expediente, MAX(autoridad), MAX(tipo), MAX(contenido) FROM resoluciones WHERE no_expediente IN ("
             for case in casesdata:
                 big_query = big_query + "'" + str(case[0]) + "', "
-            big_query   = big_query + " '0000/0000');"
+            big_query   = big_query + " 'XXXX/XXXX') GROUP BY no_expediente;" # Este ultimo para solucionar la coma anterior
+            # big_query   = big_query + " 'XXXX/XXXX');" # Este ultimo para solucionar la coma anterior
  
             cursor.execute(big_query)
             big_query_data = cursor.fetchall()
-
 
             # Clear new notifications
             query = "UPDATE userinfo SET notificaciones = '0' WHERE user_name = '" + str(name) + "';"
@@ -332,9 +335,6 @@ def userHome(path):
 
             cursor.close()
             conn.close()
-
-
-
 
             return render_template('demo_userhome.html', 
                 username=userdata[0][1],
