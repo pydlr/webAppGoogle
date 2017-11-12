@@ -1,8 +1,16 @@
+from __future__ import unicode_literals
+
 from    flask       import  Flask, render_template, json, request, redirect, session
 from    werkzeug    import  generate_password_hash, check_password_hash
+
 import  MySQLdb     as      mysql 
 import  os
 import  uuid
+import  parse_class 
+
+# TODO: Hacer una clase y  objeto User ?
+# TODO: Abstraer todas las llamadas a mysql, en una sola funcion
+
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/Uploads'
@@ -22,7 +30,24 @@ CLOUDSQL_CONNECTION_NAME    = os.environ.get('CLOUDSQL_CONNECTION_NAME')
 CLOUDSQL_USER               = os.environ.get('CLOUDSQL_USER')
 CLOUDSQL_PASSWORD           = os.environ.get('CLOUDSQL_PASSWORD')
 
-def connect_to_cloudsql():
+# SignUp
+@app.route('/admin')
+def admin():
+
+    user        = str(session.get('user'))
+
+    if (user == 'Resonant Digit' or 
+        user == 'Roberto'):
+        print 'Logged as admin'
+        return render_template('demo_admin.html')
+
+    else:
+        return render_template('demo_error.html', error='Unauthorized access')
+
+# MySQL connection to either Google App Engine's SQL instance or default to the local database
+# The local database has to have the local mysql server running
+def connect_to_cloudsql():    
+    # Google App Engine:
     # When deployed to App Engine, the 'SERVER_SOFTWARE' environment variable
     # will be set to 'Google App Engine/version'.
     if os.getenv('SERVER_SOFTWARE','').startswith('Google App Engine/'):
@@ -36,6 +61,8 @@ def connect_to_cloudsql():
             user        = CLOUDSQL_USER,
             passwd      = CLOUDSQL_PASSWORD,
             db          = dbname)
+        print 'Using Google cloud sql'
+        print conn 
 
     # If the unix socket is unavailable, then try to connect using TCP. This 
     # will work if you are running a local MySQL server or using the Clud SQL
@@ -44,75 +71,291 @@ def connect_to_cloudsql():
     #   $ cloud_sql_proxy -instances=abogangster-182717:europe-west3:boletin=tcp:3306
     #
 
+    # Local MySQL:
     else:
-        print "local mysql"
         conn = mysql.connect(
             host    = '127.0.0.1',
             user    = 'root',
             passwd  = 'NO',
             db      = dbname)
 
+        print "Using localhost"
+        print conn
     return conn
 
+# Call parser, false to not save to database
+# use parseToday
+# TODO: add options for database name etc.
+@app.route('/parseHtml')
+def parseHml():
+    parser = parse_class.Parser(False) 
+    return render_template('demo_signup.html')
+
+# Parse html from link in the url, or local file i.e.
+# /parseToday?link=http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171030.htm
+# http://www.pjbc.gob.mx/boletinj/2017/my_html/bc171106.htm
+# boletin.html
+@app.route('/parseFromLink', methods=['GET','POST'])
+def parseFromLink():
+
+    # The name of file or URL come from the gui
+    link = str(request.form['inputLink'])
+
+    # MySQL connection & query
+    query = "SELECT * FROM usercases;"
+    print query
+    conn                = connect_to_cloudsql()
+    cursor              = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    # No_Expediente - Username - nuevaResolucion
+    datos = []
+    for rows in data:
+        datos.append ( [ rows[1], rows[2],  0])
+
+    parser = parse_class.Parser()
+    #newdata = parser.parse(writeToDatabase = True, localfile = False, link, datos = None) 
+    newdata = parser.parse(True, True, link, datos) 
+    print newdata
+
+    ##### AGGREGATE NEWS INTO USERS PROFILE TO NOTIFY THEM 
+    query = "SELECT user_name FROM userinfo;"
+    print query
+    conn                = connect_to_cloudsql()
+    cursor              = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    
+    print ' DATA: ' + str(data)
+
+    notificaciones = 0
+    for user in data:
+        for row in newdata:
+            if row[1] == user[0]:
+                notificaciones += row[2]
+        print notificaciones 
+
+        query = "UPDATE userinfo SET notificaciones = '" + str(notificaciones) + "' where user_name = '" + str(user[0]) + "';"
+        print query
+        cursor.execute(query)
+        try:
+            conn.commit()
+        except Exception as error:
+            print error
+        print 'FETCH: ' + str(cursor.fetchall())
+        notificaciones = 0 
+
+    cursor.close()
+    conn.close()
+
+
+    return redirect('/admin')
+
+@app.route('/sqlCommand', methods=['GET','POST'])
+def sqlCommand():
+    query = str(request.form['inputQuery'])
+    print query
+    conn                = connect_to_cloudsql()
+    cursor              = conn.cursor()
+
+    cursor.execute(query)
+
+    data = cursor.fetchall()
+    print data
+
+    if(conn.commit()): 
+        print 'commit()'
+    cursor.close()
+    conn.close()
+
+    datos = []
+
+    for rows in data:
+        datos.append ( [ rows[1], rows[2],  0])
+
+    return redirect('/admin')
+
+# ################################################# MAIN  
 @app.route('/')
-@app.route('/main')
 def main():
+    if session.get('user'):
+        url = '/userHome/' + str(session.get('user'))
+        return redirect(url)
+    else:
+        return render_template('index.html')
 
-    return render_template('index.html')
-
-# This is a dummy function to test cathing any path and using it to render content
-# @app.route('/public/<path:path>/')
-@app.route('/public')
-def bla():
-    # print path
-    return render_template('index_carousel.html', first_slider="path")
-
-
-
+# SignIn
 @app.route('/showSignIn')
 def showSignin():
     return render_template('signin.html')
 
+# SignUp
 @app.route('/showSignUp')
 def showSignUp():
-    # return render_template('signup.html')
     return render_template('demo_signup.html')
+
+# Search Table 
+@app.route('/showCase', methods=['GET','POST'])
+def showCase():
+    try:
+        # MySQL call  - TODO: Abstract 
+        conn                = connect_to_cloudsql()
+        cursor              = conn.cursor()
+        print 'aqui'
+        if request.method == 'POST':
+            expediente = str(request.form['inputCase'])
+            print 'expediente for: ' + expediente 
+            # print 'request'
+
+        # if request.args.get('inputCase'):
+        else:
+            expediente = str(request.args.get('inputCase'))
+            print 'expdiente args: ' + expediente
+        print 'exp'
+        if expediente == 'all':
+            query = "SELECT no_expediente, autoridad, tipo, contenido from `resoluciones`"
+        else:
+            query = ("SELECT no_expediente, autoridad, tipo, contenido "
+            "FROM resoluciones " 
+            "WHERE (`autoridad` " 
+            "LIKE '%" + str(expediente) + "%') OR (no_expediente LIKE '%" + str(expediente) + "%') OR (tipo LIKE '%" + str(expediente) + "%');")
+            
+        print query
+        cursor.execute(query)
+        data = cursor.fetchall()
+        conn.commit() 
+        cursor.close() 
+        conn.close()
+    except Exception as error:
+        print "Error in query: " + str(error)
+
+    if request.method == 'POST':
+        return render_template('demo_showcase.html', data = data, caso = expediente)
+    else:
+        return render_template('demo_detailcase.html', data = data, caso = expediente)
+
+@app.route('/addCase', methods=['POST'])
+def addCase():
+        # The gui form might give strange characters 
+        case        = request.form["case"].encode('utf-8',"replace" ).replace('\n', ' ').replace('\r', '')
+        autoridad   = request.form["auto"].encode('utf-8',"replace" ).replace('\n', ' ').replace('\r', '')
+
+        user        = str(session.get('user'))
+        if user:
+            try:
+                conn    = connect_to_cloudsql()
+                cursor  = conn.cursor()
+                cursor.callproc('sp_insert_usercase', (case, user, autoridad ) )
+                data    = cursor.fetchall()
+                print data
+                if len(data) == 0: 
+                    conn.commit()
+                    cursor.close()
+                    conn.close()
+                    print 'Added case ' + str(case) + ' to user ' + str(user) 
+                    return 'Added case ' + str(case) + ' to user ' + str(user) 
+                else:
+                    cursor.close()
+                    conn.close()
+                    return 'Could not add case'
+            except Exception as error:
+                print " Add case error: " + str(error)
+                return error
+
+        return "LSD"
+
+@app.route('/removeCase', methods=['GET','POST'])
+def removeCase():
+        case        = request.form["case"]
+        autoridad   = request.form["auto"]
+        user        = str(session.get('user'))
+        print case
+        print autoridad
+
+        if user:
+            try:
+                conn    = connect_to_cloudsql()
+                cursor  = conn.cursor()
+                cursor.callproc('sp_delete_usercase', (case, user, autoridad ) )
+                data    = cursor.fetchall()
+                conn.commit()
+                cursor.close()
+                conn.close()
+                print data
+                path = '/'
+                return redirect(path)
+
+            except Exception as error:
+                print error 
+                return error
+
+        return "LSD"
 
 
 @app.route('/userHome/<path:path>/',methods=['GET','POST'])
 def userHome(path):
-    if str(session.get('user')) == str(path):
+    try:
 
-        conn    = connect_to_cloudsql()
-        cursor  = conn.cursor()
-        # cursor.callproc('sp_validateLogin',(_username,))
-        mysql_query = "SELECT * FROM userinfo WHERE user_name = '" + str(path) + "';"
-        cursor.execute(mysql_query)
-        data    = cursor.fetchall()
+        if str(session.get('user')) == str(path):
+            name        = str(session.get('user'))
+            conn        = connect_to_cloudsql()
+            cursor      = conn.cursor()
+            # cursor.callproc('sp_validateLogin',(_username,))
+            mysql_userdata_query = "SELECT * FROM userinfo WHERE user_name = '" + str(path) + "';"
+            cursor.execute(mysql_userdata_query)
+            userdata    = cursor.fetchall()
 
-        return render_template('demo_userhome.html', 
-            username=data[0][1])
-    else:
-        return render_template('demo_error.html',error = 'Unauthorized Access')
+            mysql_cases_query = "SELECT distinct no_expediente FROM usercases WHERE user_name = '" + str(name) + "' ORDER BY no_expediente;" 
 
+            cursor.execute(mysql_cases_query)
+            casesdata   = cursor.fetchall()
+
+            # big_query   = "SELECT distinct no_expediente, autoridad, tipo, contenido FROM resoluciones WHERE no_expediente IN ("
+            big_query   = "SELECT distinct no_expediente, MAX(autoridad), MAX(tipo), MAX(contenido) FROM resoluciones WHERE no_expediente IN ("
+            for case in casesdata:
+                big_query = big_query + "'" + str(case[0]) + "', "
+            big_query   = big_query + " 'XXXX/XXXX') GROUP BY no_expediente;" # Este ultimo para solucionar la coma anterior
+            # big_query   = big_query + " 'XXXX/XXXX');" # Este ultimo para solucionar la coma anterior
+ 
+            cursor.execute(big_query)
+            big_query_data = cursor.fetchall()
+
+            # Clear new notifications
+            query = "UPDATE userinfo SET notificaciones = '0' WHERE user_name = '" + str(name) + "';"
+            cursor.execute(query)
+            try:
+                conn.commit()
+            except Exception as error:
+                print error
+
+            cursor.close()
+            conn.close()
+
+            return render_template('demo_userhome.html', 
+                username=userdata[0][1],
+                data = big_query_data,
+                notificaciones = str(userdata[0][4]) + ' Nuevas resoluciones')
+        else:
+            return render_template('demo_error.html',error = 'Unauthorized Access')
+
+    except Exception as e:
+        return render_template('demo_error.html', error = e)
 
 @app.route('/logout')
 def logout():
     session.pop('user',None)
     return redirect('/')
 
-
 @app.route('/validateLogin',methods=['POST'])
 def validateLogin():
     try:
-        print request.form['inputEmail']
-        print ' simona'
         _username = request.form['inputEmail']
         _password = request.form['inputPassword']
-        print _username
-        print _password
 
-        # connect to mysql
+        # Connect to mysql
         conn    = connect_to_cloudsql()
         cursor  = conn.cursor()
         cursor.callproc('sp_validateLogin',(_username,))
@@ -136,66 +379,58 @@ def validateLogin():
         conn.close()
         # return render_template('loginerror.html',error = 'Unauthorized Access')
 
-
-@app.route('/getProfile')
-def getProfile():
-    try:
-        print "1"
-        if session.get('user'):
-            print "2"
-            _user = session.get('user')
-
-            con = mysql.connect()
-            cursor = con.cursor()
-            cursor.callproc('sp_GetWishByUser',(_user,))
-            wishes = cursor.fetchall()
-            print "3"
-            wishes_dict = []
-            for wish in wishes:
-                wish_dict = {
-                        'Id': wish[0],
-                        'Title': wish[1],
-                        'Description': wish[2],
-                        'Date': wish[4]}
-                wishes_dict.append(wish_dict)
-
-            return json.dumps(wishes_dict)
-        else:
-            print "4"
-            return render_template('demo_error.html', error = 'Unauthorized Access')
-    except Exception as e:
-        print "5"
-        return render_template('demo_error.html', error = str(e))
-
-
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
-    # return render_template('index.html')
-    print "path"
-    print ("/../" + request.form['filePath1'])
+    print 'simon'
+    # print request.form['fbName']
+    fb =   request.args.get('fb')
+    print request.method
+    # fb = request.form['fb']
+    print fb
+    # Login with Facebook
+    if fb == '1':
+        print 'facebook'
+        _name       = request.form['fbName']
+        print  _name
+        if request.form['fbEmail']:
+            _email   = request.form['fbEmail']
+        else: 
+            _email = 'Undefined'
 
-    try:
+        _password   = "default"
+
+    # Request from our interface
+    else: 
         _name       = request.form['inputName']
-        _email      = request.form['inputEmail']
-        _password   = request.form['inputPassword']
-        # validate the received values
-        if _name and _email and _password:
+        _email      = request.form['inputEmailSignUp'] 
+        _password   = request.form['inputPasswordSignUp']
+        
+    try:
 
-            # All Good, let's call MySQL
-            conn                = mysql.connect(host=hostname,user=username,passwd=passwd,db=dbname)
-            #conn                = connect_to_cloudsql()
+        # Validate the received values
+        if _name and _email and _password:
+            print 'name'
+            # MySQL process
+            conn                = connect_to_cloudsql()
             cursor              = conn.cursor()
             _hashed_password    = generate_password_hash(_password)
             cursor.callproc('sp_create_user',(_name,_email,_hashed_password))
             data                = cursor.fetchall()
 
-            if len(data) is 0:
+            # Creation succesful! 
+            if (len(data) == 0):
                 conn.commit()   
                 session['user'] = _name
-                # return json.dumps({'message':'User created successfully!'})
-                # return render_template('index_table.html', data = data)
                 return _name
+
+            # User is already in database
+            elif (data[0][0] == 'User Exists!'):   
+                session['user'] = _name
+                return _name
+
+            # Everything went wrong, cry!
             else:
+                print 'DB error'
                 return json.dumps({'error':str(data[0])})
         else:
             return json.dumps({'html':'<span>Enter the required fields</span>'})
@@ -203,25 +438,12 @@ def signUp():
     except Exception as e:
 
         return json.dumps({'error':str(e)})
+
     finally:
         # TODO: This shit is bad, if name email and password are not valid, no cursor nor conn will
         # have been created so here they will be null, fix this!
         cursor.close() 
         conn.close()
-
-@app.route('/display')        
-def display():
-    conn                = connect_to_cloudsql()
-    cursor              = conn.cursor()
-    # query               = 'SELECT * from tbl_user'
-    cursor.execute('SELECT user_id, user_name, user_username from tbl_user')
-    # cursor.execute('SELECT * from tbl_user')
-
-    data = cursor.fetchall()
-    conn.commit()
-    cursor.close() 
-    conn.close()
-    return render_template('index_table.html', data = data)
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -235,7 +457,7 @@ def upload():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=8888)
+    app.run(host='0.0.0.0',port=5555)
 
 
 

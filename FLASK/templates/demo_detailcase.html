@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Boletin BC [demo-v0.1]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="demo_detailscase">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="../static/assets/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="../static/assets/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <link href="../static/css/bootstrap-toggle.min.css" rel="stylesheet">
+
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../static/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../static/assets/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../static/assets/ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="../static/assets/ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="../static/assets/ico/favicon.png">
+  
+    
+
+  </head>
+
+  
+
+  <body>
+
+                 <!-- NAVBAR
+================================================== -->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="/">Boletin BC</a>
+          <div id ="navbar" class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="/">Home</a></li>
+            </ul>
+            <ul class="nav navbar-nav pull-right">
+              
+              <li>
+                 <form   class="navbar-form pull-right" action="/showCase" method="post">
+                  <input class="span2"    type="text"       name='inputCase'     placeholder="Case #" required>
+                  <button  type="submit"     class="btn" >Search Case</button>
+                </form>
+              </li> 
+
+
+              <!-- <li><a href="/showSignUp"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li> -->
+              <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+              
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+                     <!-- navbar
+================================================== -->
+
+
+   <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit" style="background-image: url(/../static/Uploads/leaf.jpg);">
+        <!-- <h1>Sveiki atvykę!</h1> -->
+        <h1 class="row title" style='font-weight: lighter; color:white'>Boletin Judicial</h1>
+        <h1 class="row title" style='font-weight: lighter; color:white'>BC Caso: {{caso}}</h1>
+        <p></p>
+      </div>
+    </div>
+
+
+
+<!-- ====================================== TABLE ================================= -->
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit" >
+        <!-- <h1>Sveiki atvykę!</h1> -->
+        <div class="table-responsive">
+        <table class="table table-striped table-inverse" > 
+          <thead>
+              <tr >
+                  <th scope="col">EXPEDIENTE</th>
+                  <th scope="col">AUTORIDAD</th>
+                  <th scope="col">TIPO</th>
+                  <th scope="col">CONTENIDO</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for row in data %}
+                  <tr >
+                  {% for d in row %}
+                      <td >{{ d.decode('utf-8') }}</td>
+                  {% endfor %}
+                  </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      </div>
+    </div>
+    <!-- ====================================== TABLE ================================= -->
+
+    <footer style="margin-top:80px ; margin-left: 80px"">
+        <h5 class="brand" >&copy; IO Patterns 2017</h5>
+    </footer>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../static/assets/js/jquery.js"></script>
+    <script src="../static/assets/js/bootstrap-transition.js"></script>
+    <script src="../static/assets/js/bootstrap-alert.js"></script>
+    <script src="../static/assets/js/bootstrap-modal.js"></script>
+    <script src="../static/assets/js/bootstrap-dropdown.js"></script>
+    <script src="../static/assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../static/assets/js/bootstrap-tab.js"></script>
+    <script src="../static/assets/js/bootstrap-tooltip.js"></script>
+    <script src="../static/assets/js/bootstrap-popover.js"></script>
+    <script src="../static/assets/js/bootstrap-button.js"></script>
+    <script src="../static/assets/js/bootstrap-collapse.js"></script>
+    <script src="../static/assets/js/bootstrap-carousel.js"></script>
+    <script src="../static/assets/js/bootstrap-typeahead.js"></script>
+    <script src="../static/js/bootstrap-toggle.min.js"></script>
+
+  </body>
+</html>
+</html>

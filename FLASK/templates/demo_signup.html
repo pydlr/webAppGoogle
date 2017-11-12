@@ -2,29 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Boletin BC - Sign Up Form [demo-v0.1]</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <!-- Le styles -->
+
+    <title>Boletin BC - Sign Up Form [demo-v0.1]</title>
+
     <link href="../static/assets/css/bootstrap.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-    </style>
-    <link href="../static/assets/css/bootstrap-responsive.css" rel="stylesheet">/
-    <!-- <link href="../static/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-    <!-- <link href="../static/css/navbar.css" rel="stylesheet"> -->
-
- <!-- <link href="../static/css/jumbotron-narrow.css" rel="stylesheet">
-
-   <link href="../static/css/signup.css" rel="stylesheet">
-  <link href="../static/css/carousel.css" rel="stylesheet">
-  <link href="../static/css/navbar.css" rel="stylesheet"> -->
+    
+    <link href="../static/assets/css/bootstrap-responsive.css" rel="stylesheet">
+ 
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -37,12 +26,35 @@
       <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../static/assets/ico/apple-touch-icon-72-precomposed.png">
                     <link rel="apple-touch-icon-precomposed" href="../static/assets/ico/apple-touch-icon-57-precomposed.png">
                                    <link rel="shortcut icon" href="../static/assets/ico/favicon.png">
+
+
+
+  <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+
   </head>
 
   <body>
 
+  <!-- =========================================== FACEBOOK SDK =======================   -->
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.10&appId=270138033508958';
+      fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+    <!-- =========================================== FACEBOOK SDK =======================   -->
+
                  <!-- NAVBAR
 ================================================== -->
+
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
@@ -54,7 +66,7 @@
           <a class="brand" href="/">Boletin BC</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="/main">Home</a></li>
+              <li class="active"><a href="/">Home</a></li>
             </ul>
             <ul class="nav navbar-nav pull-right">
              
@@ -63,15 +75,27 @@
                   <input class="span2"    type="text"       name='inputEmail'     placeholder="Email" required>
                   <input class="span2"    type="password"   name='inputPassword' placeholder="Password" required >
                   <button href="#signUp"  type="submit"     class="btn" >Sign in</button>
+                  <span style='color: white'> Or </span>
                 </form>
               </li>
+
+              <!-- =================================== FB NAVBAR BUTTON ================================= -->
+              <li>
+                  <div style='margin-top: 5px; margin-left: 5px;'>
+                  <div class="fb-login-button" data-width="20" data-max-rows="1" data-size="medium" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"
+                  scope="public_profile, email" onlogin="checkLogin();" ></div>
+                  </div>
+              </li>
+              <!-- =================================== FB NAVBAR BUTTON ================================= -->
+
+              
                             
             </ul>
           </div><!--/.nav-collapse -->
         </div>
       </div>
     </div>
-                     <!-- navbar
+            <!-- navbar
 ================================================== -->
 
 
@@ -80,41 +104,51 @@
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="hero-unit" style="background-image: url(/../static/Uploads/blue_abstract_2.jpg);background-size:100%">
 <!-- <div class="well"> -->
-          <form class="form-group" role="form" method="post" action="/signUp">
+          <form class="form-group" role="form" action="/signUp" method="post"  >
 
             <!-- Form Name -->
             <legend style="color:white;">Register</legend>
 
             <!-- Name input-->
             <div class="form-group">
-              <label  for="txtTitle" style="color:white;">Name</label>  
-              <input id="inputName" name="inputName" type="text" placeholder="" class="form-control input-md" required> 
+              <label  for="txtTitle" style="color:white;">Names</label>  
+              <input name="inputName" type="text" placeholder="" class="form-control input-md"> 
             </div>
 
             <!-- Email input-->
             <div class="form-group">
               <label  for="txtTitle" style="color:white;">Email</label>  
-              <input id="inputEmail" name="inputEmail" type="email" placeholder="" class="form-control input-md" required> 
+              <input name="inputEmailSignUp" type="email" placeholder="example@example.com" class="form-control input-md"> 
             </div>
 
             <!-- Password input-->
             <div class="form-group">
               <label  for="txtTitle" style="color:white;">Password</label>  
-              <input id="inputPassword" name="inputPassword" type="password" placeholder="" class="form-control input-md" required> 
+              <input name="inputPasswordSignUp" type="password" placeholder="" class="form-control input-md"> 
             </div>
 
             
             <!-- Button -->
             <div class="form-group">
                 <p class="text-left">
-                  <button id="btnSignUp" 
-                                class = "btn btn-primary btn-large"
-                                type="button"
-                                style="background-color:#1b9686;">
+                  <a  id = "btnSignUp"
+                                class = "btn btn-primary btn-large">
                                 Sign Up!
-                  </button>
+                  </a>
                 </p>
             </div>
+
+            <label  for="txtTitle" style="color:white;">Or</label>  
+
+            <!-- ============================  FACEBOOK LOGIN BUTTON ============================= -->
+            <!-- <div style='margin-top:10px'> -->
+            <div class="fb-login-button" data-width="20" data-max-rows="1" data-size="medium" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"
+            scope="public_profile, email" onlogin="checkLogin();" width='20px' ></div>
+          <!-- </div> -->
+          
+            <!-- ============================  FACEBOOK LOGIN BUTTON ============================= -->
+
+
           </form>
 
       </div>
@@ -130,20 +164,63 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="../static/assets/js/jquery.js"></script>
-    <script src="../static/assets/js/bootstrap-transition.js"></script>
-    <script src="../static/assets/js/bootstrap-alert.js"></script>
-    <script src="../static/assets/js/bootstrap-modal.js"></script>
-    <script src="../static/assets/js/bootstrap-dropdown.js"></script>
-    <script src="../static/assets/js/bootstrap-scrollspy.js"></script>
-    <script src="../static/assets/js/bootstrap-tab.js"></script>
-    <script src="../static/assets/js/bootstrap-tooltip.js"></script>
-    <script src="../static/assets/js/bootstrap-popover.js"></script>
-    <script src="../static/assets/js/bootstrap-button.js"></script>
-    <script src="../static/assets/js/bootstrap-collapse.js"></script>
-    <script src="../static/assets/js/bootstrap-carousel.js"></script>
-    <script src="../static/assets/js/bootstrap-typeahead.js"></script>
 
     <script src="../static/js/signUp.js"></script>
+
+    <script>
+         function checkLogin(signOrLog)
+         {
+          FB.getLoginStatus(function(response) 
+                        {
+                          console.log(response.status);
+                          signInFB(response.status,signOrLog);
+                        });
+         }
+
+          function signInFB(newstatus, signOrLog) 
+         {
+            FB.api('/me', function(response) 
+            {
+              console.log('Successful login for: ' + response.name);
+              var name = response.name;
+              var mail = response.email;
+              if (typeof mail == 'undefined')
+              {
+                mail = 'default';
+              }
+              
+              SignIn(name,mail, '/signUp?fb=1');
+              
+            });
+          }
+
+          function SignIn()
+          {
+                  $.ajax(
+                  {
+                      url: arguments[2],
+                      data: { fb : '1',
+                              fbName : arguments[0],
+                              fbEmail: arguments[1]
+                            },
+                      type: 'POST',
+                      success: function(response) 
+                      {
+                          var str1 = "/userHome/";
+                          var str2 = response;
+                          var str3 = "?fb=1"
+                          var path = str1.concat(str2);
+                          var path = path.concat(str3);
+                          window.location = path;
+                      },
+                      error: function(error) 
+                      {
+                          console.log(" Debug error in js");
+                      }
+                  });
+          }
+    </script>
+    
 
   </body>
 </html>
