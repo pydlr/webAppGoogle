@@ -83,7 +83,7 @@
               <li>
                   <div style='margin-top: 5px; margin-left: 5px;'>
                   <div class="fb-login-button" data-width="20" data-max-rows="1" data-size="medium" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"
-                  scope="public_profile, email" onlogin="checkLogin('login');" ></div>
+                  scope="public_profile, email" onlogin="checkLogin();" ></div>
                   </div>
               </li>
               <!-- =================================== FB NAVBAR BUTTON ================================= -->
@@ -143,7 +143,7 @@
             <!-- ============================  FACEBOOK LOGIN BUTTON ============================= -->
             <!-- <div style='margin-top:10px'> -->
             <div class="fb-login-button" data-width="20" data-max-rows="1" data-size="medium" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"
-            scope="public_profile, email" onlogin="checkLogin('signup');" width='20px' ></div>
+            scope="public_profile, email" onlogin="checkLogin();" width='20px' ></div>
           <!-- </div> -->
           
             <!-- ============================  FACEBOOK LOGIN BUTTON ============================= -->
@@ -164,18 +164,6 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="../static/assets/js/jquery.js"></script>
-    <!-- <script src="../static/assets/js/bootstrap-transition.js"></script> -->
-    <!-- <script src="../static/assets/js/bootstrap-alert.js"></script> -->
-    <!-- <script src="../static/assets/js/bootstrap-modal.js"></script> -->
-    <!-- <script src="../static/assets/js/bootstrap-dropdown.js"></script> -->
-    <!-- <script src="../static/assets/js/bootstrap-scrollspy.js"></script> -->
-    <!-- <script src="../static/assets/js/bootstrap-tab.js"></script> -->
-    <!-- <script src="../static/assets/js/bootstrap-tooltip.js"></script> -->
-    <!-- <script src="../static/assets/js/bootstrap-popover.js"></script> -->
-    <!-- <script src="../static/assets/js/bootstrap-button.js"></script> -->
-    <!-- <script src="../static/assets/js/bootstrap-collapse.js"></script> -->
-    <!-- <script src="../static/assets/js/bootstrap-carousel.js"></script> -->
-    <!-- <script src="../static/assets/js/bootstrap-typeahead.js"></script> -->
 
     <script src="../static/js/signUp.js"></script>
 
@@ -200,14 +188,9 @@
               {
                 mail = 'default';
               }
-              if (signOrLog == 'login')
-              {
-                SignIn(name,mail, '/signUp');
-              }
-              else
-              {
-                SignIn(name, mail, '/signUp');
-              }
+              
+              SignIn(name,mail, '/signUp?fb=1');
+              
             });
           }
 
@@ -233,7 +216,6 @@
                       error: function(error) 
                       {
                           console.log(" Debug error in js");
-                          // window.location = /error;
                       }
                   });
           }

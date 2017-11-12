@@ -171,11 +171,18 @@
             // table.removeChild(row); 
             // tempAlert("close",5000);
            // POST request to this url in flask, delete this case from DB
-           var path = '/showDetail?expediente='
+
+           
+          // path = '/showCase'
+           var path = '/showCase?inputCase='
+            
+
            path = path.concat(String(expediente))
-           //  $.post( 
-           //    path ) ;
-           window.location = path; 
+
+           console.log(path)
+           window.location = path;
+            // $.get( 
+            //   path ) ;
 
 
          }
@@ -188,7 +195,7 @@
             table.removeChild(row); 
             // tempAlert("close",5000);
            // POST request to this url in flask, delete this case from DB
-            $.post( 
+            $.get( 
               "/removeCase", 
               {  case : expediente,
                   auto : autoridad} ) ;
@@ -196,16 +203,6 @@
 
          }
 
-          function tempAlert(msg,duration)
-          {
-           var el = document.createElement("div");
-           el.setAttribute("style","position:absolute;top:40%;left:20%;background-color:white;");
-           el.innerHTML = msg;
-           setTimeout(function(){
-            el.parentNode.removeChild(el);
-           },duration);
-           document.body.appendChild(el);
-          }
     </script>
 
   </body>
